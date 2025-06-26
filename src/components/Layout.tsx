@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingCart, User, Zap } from "lucide-react";
+import {
+  Menu,
+  X,
+  ShoppingCart,
+  User,
+  Zap,
+  LogIn,
+  LogOut,
+  Shield,
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 interface LayoutProps {
@@ -11,7 +21,9 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
+  const { currentUser, logout, isAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +37,15 @@ const Layout = ({ children }: LayoutProps) => {
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setShowUserMenu(false);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   const navItems = [
     { path: "/", label: "Home" },
@@ -86,9 +107,66 @@ const Layout = ({ children }: LayoutProps) => {
               <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
                 <ShoppingCart className="w-5 h-5 text-white" />
               </button>
-              <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
-                <User className="w-5 h-5 text-white" />
-              </button>
+
+              {currentUser || isAdmin ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-2 p-2 rounded-lg glass-card hover:bg-white/10 transition-colors"
+                  >
+                    {isAdmin ? (
+                      <Shield className="w-5 h-5 text-neon-cyan" />
+                    ) : (
+                      <User className="w-5 h-5 text-white" />
+                    )}
+                    <span className="text-white text-sm">
+                      {isAdmin ? "Admin" : currentUser?.email?.split("@")[0]}
+                    </span>
+                  </button>
+
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 top-full mt-2 w-48 glass-card border border-white/10 rounded-lg py-2 z-50"
+                      >
+                        {isAdmin && (
+                          <Link
+                            to="/admin"
+                            className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                            onClick={() => setShowUserMenu(false)}
+                          >
+                            <Shield className="w-4 h-4" />
+                            <span>Admin Panel</span>
+                          </Link>
+                        )}
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Logout</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Link
+                    to="/login"
+                    className="flex items-center space-x-1 px-4 py-2 rounded-lg glass-card hover:bg-white/10 transition-colors text-white"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span>Login</span>
+                  </Link>
+                  <Link to="/signup" className="catrink-button text-sm">
+                    Sign Up
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -129,13 +207,54 @@ const Layout = ({ children }: LayoutProps) => {
                     {item.label}
                   </Link>
                 ))}
-                <div className="flex items-center space-x-4 pt-4 border-t border-white/10">
-                  <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
-                    <ShoppingCart className="w-5 h-5 text-white" />
-                  </button>
-                  <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
-                    <User className="w-5 h-5 text-white" />
-                  </button>
+                <div className="pt-4 border-t border-white/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
+                      <ShoppingCart className="w-5 h-5 text-white" />
+                    </button>
+
+                    {currentUser || isAdmin ? (
+                      <div className="flex items-center space-x-2">
+                        <span className="text-white/70 text-sm">
+                          {isAdmin
+                            ? "Admin"
+                            : currentUser?.email?.split("@")[0]}
+                        </span>
+                        {isAdmin && (
+                          <Link
+                            to="/admin"
+                            className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <Shield className="w-5 h-5 text-neon-cyan" />
+                          </Link>
+                        )}
+                        <button
+                          onClick={handleLogout}
+                          className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors"
+                        >
+                          <LogOut className="w-5 h-5 text-white" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <Link
+                          to="/login"
+                          className="px-4 py-2 rounded-lg glass-card hover:bg-white/10 transition-colors text-white text-sm"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          to="/signup"
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-neon-blue to-neon-purple text-white text-sm font-semibold"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Sign Up
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
