@@ -37,9 +37,8 @@ const Contact = () => {
   const [error, setError] = useState("");
 
   // EmailJS configuration
-  const EMAILJS_SERVICE_ID = "service_catrink"; // You'll need to create this in EmailJS
-  const EMAILJS_TEMPLATE_ID = "template_contact"; // You'll need to create this template
-  const EMAILJS_PUBLIC_KEY = "your_emailjs_public_key"; // You'll need to get this from EmailJS
+  const EMAILJS_SERVICE_ID = "service_c2wun1e";
+  const EMAILJS_PUBLIC_KEY = "wI1Qo5uf_5A-iCy0u";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -72,28 +71,22 @@ const Contact = () => {
       const templateParams = {
         from_name: formData.name,
         from_email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject || "New Contact Form Submission",
+        phone: formData.phone || "Not provided",
+        subject:
+          formData.subject ||
+          "New Contact Form Submission from Catrink Website",
         message: formData.message,
         to_email: "flayermc.in@gmail.com",
         reply_to: formData.email,
       };
 
-      // For demo purposes, we'll simulate the email sending
-      // In production, you would uncomment this and configure EmailJS:
-      // await emailjs.send(
-      //   EMAILJS_SERVICE_ID,
-      //   EMAILJS_TEMPLATE_ID,
-      //   templateParams,
-      //   EMAILJS_PUBLIC_KEY
-      // );
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Email would be sent to flayermc.in@gmail.com with:", {
-        ...templateParams,
-      });
+      // Send email using EmailJS
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        "template_default", // Using default template
+        templateParams,
+        EMAILJS_PUBLIC_KEY,
+      );
 
       setSuccess(true);
       setFormData({
