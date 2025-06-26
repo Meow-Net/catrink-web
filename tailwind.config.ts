@@ -19,6 +19,7 @@ export default {
     },
     extend: {
       colors: {
+        // Original shadcn colors maintained for compatibility
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -62,6 +63,23 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Catrink neon brand colors
+        neon: {
+          blue: "hsl(var(--neon-blue))",
+          purple: "hsl(var(--neon-purple))",
+          red: "hsl(var(--neon-red))",
+          cyan: "hsl(var(--neon-cyan))",
+          pink: "hsl(var(--neon-pink))",
+        },
+        glass: {
+          DEFAULT: "hsl(var(--glass))",
+          border: "hsl(var(--glass-border))",
+        },
+      },
+      fontFamily: {
+        orbitron: ["Orbitron", "monospace"],
+        techno: ["Audiowide", "cursive"],
+        sans: ["Inter", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -70,27 +88,112 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "neon-pulse": {
+          "0%, 100%": {
+            textShadow:
+              "0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor",
+            filter: "brightness(1)",
           },
-          to: {
-            height: "0",
+          "50%": {
+            textShadow:
+              "0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor",
+            filter: "brightness(1.2)",
           },
+        },
+        "glow-pulse": {
+          "0%, 100%": {
+            boxShadow:
+              "0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor",
+          },
+          "50%": {
+            boxShadow:
+              "0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor",
+          },
+        },
+        "cat-blink": {
+          "0%, 90%, 100%": { transform: "scaleY(1)" },
+          "95%": { transform: "scaleY(0.1)" },
+        },
+        "liquid-flow": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "slide-up": {
+          "0%": { transform: "translateY(100%)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "neon-pulse": "neon-pulse 2s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "cat-blink": "cat-blink 3s ease-in-out infinite",
+        "liquid-flow": "liquid-flow 3s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
+        "slide-up": "slide-up 0.6s ease-out",
+        "fade-in": "fade-in 0.8s ease-out",
+      },
+      backdropBlur: {
+        xs: "2px",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addUtilities }: any) {
+      const newUtilities = {
+        ".glass": {
+          background: "rgba(255, 255, 255, 0.1)",
+          "backdrop-filter": "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+        },
+        ".glass-dark": {
+          background: "rgba(0, 0, 0, 0.2)",
+          "backdrop-filter": "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+        },
+        ".neon-glow-blue": {
+          "box-shadow":
+            "0 0 10px theme(colors.neon.blue), 0 0 20px theme(colors.neon.blue), 0 0 40px theme(colors.neon.blue)",
+        },
+        ".neon-glow-purple": {
+          "box-shadow":
+            "0 0 10px theme(colors.neon.purple), 0 0 20px theme(colors.neon.purple), 0 0 40px theme(colors.neon.purple)",
+        },
+        ".neon-glow-red": {
+          "box-shadow":
+            "0 0 10px theme(colors.neon.red), 0 0 20px theme(colors.neon.red), 0 0 40px theme(colors.neon.red)",
+        },
+        ".text-glow-blue": {
+          "text-shadow":
+            "0 0 10px theme(colors.neon.blue), 0 0 20px theme(colors.neon.blue), 0 0 40px theme(colors.neon.blue)",
+        },
+        ".text-glow-purple": {
+          "text-shadow":
+            "0 0 10px theme(colors.neon.purple), 0 0 20px theme(colors.neon.purple), 0 0 40px theme(colors.neon.purple)",
+        },
+        ".text-glow-red": {
+          "text-shadow":
+            "0 0 10px theme(colors.neon.red), 0 0 20px theme(colors.neon.red), 0 0 40px theme(colors.neon.red)",
+        },
+      };
+      addUtilities(newUtilities);
+    },
+  ],
 } satisfies Config;
