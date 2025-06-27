@@ -10,36 +10,43 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    console.log("Preloader started");
+    let progressTimer: NodeJS.Timeout;
 
     const completeLoading = () => {
-      console.log("Preloader completing");
       setProgress(100);
       setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
-          console.log("Preloader calling onComplete");
           onComplete();
         }, 300);
       }, 200);
     };
 
-    // Simplified approach: Complete loading after 3 seconds
-    const timer = setTimeout(() => {
-      completeLoading();
-    }, 3000);
+    // Progress animation - smooth progression to 100%
+    const startProgress = () => {
+      progressTimer = setInterval(() => {
+        setProgress((prev) => {
+          const newProgress = prev + Math.random() * 8 + 4; // Random increment between 4-12%
 
-    // Progress animation
-    const progressTimer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 95) return prev; // Stop at 95% and let the timer complete it
-        return prev + Math.random() * 10 + 5; // Faster, more realistic progress
-      });
-    }, 200);
+          if (newProgress >= 100) {
+            clearInterval(progressTimer);
+            completeLoading();
+            return 100;
+          }
+
+          return newProgress;
+        });
+      }, 150); // Update every 150ms for smoother animation
+    };
+
+    // Start progress after a short delay
+    const startTimer = setTimeout(() => {
+      startProgress();
+    }, 500);
 
     return () => {
-      clearTimeout(timer);
-      clearInterval(progressTimer);
+      clearTimeout(startTimer);
+      if (progressTimer) clearInterval(progressTimer);
     };
   }, [onComplete]);
 
