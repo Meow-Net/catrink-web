@@ -32,18 +32,112 @@ const MeowChatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  const botResponses = [
-    "That's pawsome! Let me help you find the perfect energy boost. Meow!",
-    "Purr-fect question! Catrink has amazing flavors that'll make you feel like the cat's whiskers. Meow!",
-    "I'm feline good about helping you with that! What specific flavor are you curious about? Meow!",
-    "That's claw-some! Our energy drinks are designed to awaken your inner predator instincts. Meow!",
-    "Whiskers! I'd be happy to help you with that. What energy level are you looking for today? Meow!",
-    "Paw-sitively! Catrink energy drinks are the cat's pajamas for boosting your reflexes. Meow!",
-    "That's fur-tastic! I can help you find exactly what you're looking for in our collection. Meow!",
-    "Meow-nificent question! Our premium ingredients will have you feeling like a sleek panther. Meow!",
-    "I'm not kitten around - that's a great question! Let me share some details with you. Meow!",
-    "Claw-some choice! Catrink is purr-fect for anyone wanting to unlock their feline potential. Meow!",
-  ];
+  const getIntelligentResponse = (userMessage: string): string => {
+    const message = userMessage.toLowerCase();
+
+    // Greetings
+    if (
+      message.includes("hi") ||
+      message.includes("hello") ||
+      message.includes("hey")
+    ) {
+      return "Hello there, energy seeker! I'm MeowCat, your friendly Catrink assistant. I'm here to help you discover the purr-fect energy drink to awaken your inner cat! What can I help you with today? Meow! 🐱";
+    }
+
+    // Flavors
+    if (
+      message.includes("flavor") ||
+      message.includes("flavour") ||
+      message.includes("taste") ||
+      message.includes("mango") ||
+      message.includes("bluster")
+    ) {
+      return "Purr-fect question! Our flagship flavor is Mango Bluster - a tropical thunder that'll unleash your inner jungle cat! We also have Neon Night (dark berry), Arctic Prowl (icy mint), and more exciting flavors. Which one catches your whiskers? Meow!";
+    }
+
+    // Energy/Performance
+    if (
+      message.includes("energy") ||
+      message.includes("boost") ||
+      message.includes("performance") ||
+      message.includes("awaken")
+    ) {
+      return "That's claw-some! Catrink energy drinks are designed to awaken your inner predator instincts with lightning-fast reflexes and sustained energy. Our formula gives you cat-like agility and focus that lasts for hours! Ready to unleash your potential? Meow!";
+    }
+
+    // Ingredients/Health
+    if (
+      message.includes("ingredient") ||
+      message.includes("healthy") ||
+      message.includes("safe") ||
+      message.includes("natural")
+    ) {
+      return "Meow-nificent question! Catrink uses only premium natural ingredients like taurine, B-vitamins, natural caffeine, ginseng root, and our proprietary Feline Focus Complex™. All our ingredients are carefully selected to enhance your cat-like performance safely! Meow!";
+    }
+
+    // Price/Buy/Shop
+    if (
+      message.includes("price") ||
+      message.includes("cost") ||
+      message.includes("buy") ||
+      message.includes("shop") ||
+      message.includes("order")
+    ) {
+      return "Paw-sitively affordable! Our energy drinks start at just $4.59, with our premium Mango Bluster at $4.99. You can shop our full collection in our store section - each sip is worth every penny for that cat-like energy boost! Meow!";
+    }
+
+    // About company/story
+    if (
+      message.includes("about") ||
+      message.includes("company") ||
+      message.includes("story") ||
+      message.includes("founded")
+    ) {
+      return "That's fur-tastic that you're curious! Catrink was born in the neon-lit labs of Neo Tokyo when scientists discovered the secret behind cats' incredible reflexes. We've bottled that feline magic to help humans unlock their inner predator potential! Meow!";
+    }
+
+    // Contact/Support
+    if (
+      message.includes("contact") ||
+      message.includes("help") ||
+      message.includes("support") ||
+      message.includes("problem")
+    ) {
+      return "I'm feline great about helping you! For detailed support, you can use our contact form or email us directly. I'm here for quick questions, but our human team can handle the bigger stuff. What specific help do you need? Meow!";
+    }
+
+    // Shipping/Delivery
+    if (
+      message.includes("ship") ||
+      message.includes("delivery") ||
+      message.includes("when") ||
+      message.includes("arrive")
+    ) {
+      return "Whiskers! We ship faster than a cat chasing a laser pointer! Standard delivery takes 3-5 business days, and we offer express shipping for when you need that energy boost ASAP. We deliver worldwide to fellow energy seekers! Meow!";
+    }
+
+    // Admin/Login (redirect to proper channels)
+    if (
+      message.includes("admin") ||
+      message.includes("login") ||
+      message.includes("account")
+    ) {
+      return "I'm not kitten around - for account and admin stuff, you'll want to use the login section in the top navigation! I'm just here to chat about our amazing energy drinks and help you find your purr-fect flavor. Meow!";
+    }
+
+    // Default responses for general questions
+    const defaultResponses = [
+      "That's pawsome! Let me help you find the perfect energy boost. What specific question do you have about Catrink? Meow!",
+      "I'm feline good about helping you with that! Could you tell me more about what you're looking for? Meow!",
+      "Claw-some question! I'd love to help you discover more about Catrink energy drinks. What interests you most? Meow!",
+      "Purr-fect! I'm here to help you awaken your inner cat. What would you like to know about our energy drinks? Meow!",
+      "That's fur-tastic! I'm your friendly Catrink guide. Ask me about flavors, ingredients, energy levels, or anything else! Meow!",
+    ];
+
+    return defaultResponses[
+      Math.floor(Math.random() * defaultResponses.length)
+    ];
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -64,7 +158,7 @@ const MeowChatbot = () => {
       () => {
         const botResponse: Message = {
           id: (Date.now() + 1).toString(),
-          text: botResponses[Math.floor(Math.random() * botResponses.length)],
+          text: getIntelligentResponse(userMessage.text),
           isBot: true,
           timestamp: new Date(),
         };
