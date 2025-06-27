@@ -143,8 +143,29 @@ const Layout = ({ children }: LayoutProps) => {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute right-0 top-full mt-2 w-48 glass-card border border-white/10 rounded-lg py-2 z-50"
+                        className="absolute right-0 top-full mt-2 w-52 glass-card border border-white/10 rounded-lg py-2 z-50"
                       >
+                        <Link
+                          to="/profile"
+                          className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <Settings className="w-4 h-4" />
+                          <span>Profile</span>
+                        </Link>
+
+                        <Link
+                          to="/orders"
+                          className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <FileText className="w-4 h-4" />
+                          <span>
+                            My Orders{" "}
+                            {orders.length > 0 && `(${orders.length})`}
+                          </span>
+                        </Link>
+
                         {currentUser && hasEverOrdered && (
                           <Link
                             to="/track-order"
@@ -152,22 +173,25 @@ const Layout = ({ children }: LayoutProps) => {
                             onClick={() => setShowUserMenu(false)}
                           >
                             <Package className="w-4 h-4" />
-                            <span>
-                              Track Orders{" "}
-                              {orders.length > 0 && `(${orders.length})`}
-                            </span>
+                            <span>Track Orders</span>
                           </Link>
                         )}
+
                         {isAdmin && (
-                          <Link
-                            to="/admin"
-                            className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-                            onClick={() => setShowUserMenu(false)}
-                          >
-                            <Shield className="w-4 h-4" />
-                            <span>Admin Panel</span>
-                          </Link>
+                          <>
+                            <div className="border-t border-white/10 my-2"></div>
+                            <Link
+                              to="/admin"
+                              className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                              onClick={() => setShowUserMenu(false)}
+                            >
+                              <Shield className="w-4 h-4" />
+                              <span>Admin Panel</span>
+                            </Link>
+                          </>
                         )}
+
+                        <div className="border-t border-white/10 my-2"></div>
                         <button
                           onClick={handleLogout}
                           className="w-full flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
@@ -247,6 +271,31 @@ const Layout = ({ children }: LayoutProps) => {
                       </div>
 
                       {/* Action Buttons */}
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        <Link
+                          to="/profile"
+                          className="flex items-center space-x-2 px-4 py-3 rounded-lg glass-card hover:bg-white/10 transition-colors text-white text-sm"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Settings className="w-4 h-4" />
+                          <span>Profile</span>
+                        </Link>
+
+                        <Link
+                          to="/orders"
+                          className="flex items-center space-x-2 px-4 py-3 rounded-lg glass-card hover:bg-white/10 transition-colors text-white text-sm relative"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <FileText className="w-4 h-4" />
+                          <span>Orders</span>
+                          {orders.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-neon-red rounded-full text-xs flex items-center justify-center text-white font-bold">
+                              {orders.length}
+                            </span>
+                          )}
+                        </Link>
+                      </div>
+
                       <div className="flex items-center justify-center space-x-3">
                         <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
                           <ShoppingCart className="w-5 h-5 text-white" />
@@ -259,11 +308,6 @@ const Layout = ({ children }: LayoutProps) => {
                             onClick={() => setIsMenuOpen(false)}
                           >
                             <Package className="w-5 h-5 text-neon-blue" />
-                            {orders.length > 0 && (
-                              <span className="absolute -top-1 -right-1 w-4 h-4 bg-neon-red rounded-full text-xs flex items-center justify-center text-white font-bold">
-                                {orders.length}
-                              </span>
-                            )}
                           </Link>
                         )}
 
