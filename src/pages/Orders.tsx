@@ -20,8 +20,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 const Orders = () => {
-  const { orders, generateTrackingId, updateOrderStatus } = useOrders();
   const { currentUser, isAdmin } = useAuth();
+
+  // Add error handling for orders context
+  let orders: any[] = [];
+  let generateTrackingId: any = () => {};
+  let updateOrderStatus: any = () => {};
+
+  try {
+    const ordersContext = useOrders();
+    orders = ordersContext.orders || [];
+    generateTrackingId = ordersContext.generateTrackingId;
+    updateOrderStatus = ordersContext.updateOrderStatus;
+  } catch (error) {
+    console.error("Orders context error:", error);
+  }
   const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
   const [copiedTrackingId, setCopiedTrackingId] = useState<string | null>(null);
 
