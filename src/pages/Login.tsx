@@ -129,14 +129,6 @@ const Login = () => {
                   </div>
                 </div>
 
-                {/* Admin Login Hint */}
-                <div className="glass-card p-4 bg-gradient-to-r from-neon-cyan/10 to-neon-blue/10 border border-neon-cyan/30">
-                  <p className="text-xs text-neon-cyan">
-                    💡 <strong>Admin Access:</strong> Use admin@catrink.in to
-                    access the admin panel
-                  </p>
-                </div>
-
                 {/* Submit Button */}
                 <button
                   type="submit"
