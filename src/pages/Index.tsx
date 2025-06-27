@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { ArrowRight, Zap, Star, ShoppingCart, Play } from "lucide-react";
 import Layout from "@/components/Layout";
 import Preloader from "@/components/Preloader";
@@ -113,16 +114,22 @@ const Index = () => {
               transition={{ duration: 0.8, delay: 1.1 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
             >
-              <button className="catrink-button flex items-center space-x-2 text-lg">
+              <Link
+                to="/shop"
+                className="catrink-button flex items-center space-x-2 text-lg"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 <span>Shop Now</span>
                 <ArrowRight className="w-5 h-5" />
-              </button>
+              </Link>
 
-              <button className="px-8 py-3 rounded-lg font-orbitron font-semibold text-white border-2 border-neon-cyan hover:bg-neon-cyan/10 transition-all duration-300 flex items-center space-x-2">
+              <Link
+                to="/about"
+                className="px-8 py-3 rounded-lg font-orbitron font-semibold text-white border-2 border-neon-cyan hover:bg-neon-cyan/10 transition-all duration-300 flex items-center space-x-2"
+              >
                 <Play className="w-5 h-5" />
                 <span>Watch Story</span>
-              </button>
+              </Link>
             </motion.div>
 
             {/* Stats */}
