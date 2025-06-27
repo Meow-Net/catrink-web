@@ -10,21 +10,35 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(() => {
-            setIsVisible(false);
-            setTimeout(onComplete, 500);
-          }, 500);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 50);
+    let timer: NodeJS.Timeout;
 
-    return () => clearInterval(timer);
+    const startProgress = () => {
+      timer = setInterval(() => {
+        setProgress((prev) => {
+          const newProgress = prev + 2;
+          if (newProgress >= 100) {
+            clearInterval(timer);
+            // Complete the loading process
+            setTimeout(() => {
+              setIsVisible(false);
+              setTimeout(() => {
+                onComplete();
+              }, 500);
+            }, 500);
+            return 100;
+          }
+          return newProgress;
+        });
+      }, 50);
+    };
+
+    // Start the progress after a short delay
+    const startDelay = setTimeout(startProgress, 100);
+
+    return () => {
+      if (timer) clearInterval(timer);
+      clearTimeout(startDelay);
+    };
   }, [onComplete]);
 
   return (
