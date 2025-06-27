@@ -59,12 +59,17 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
           transition={{ duration: 0.5 }}
           className="preloader-overlay"
         >
-          <div className="flex flex-col items-center space-y-8">
+          <div className="flex flex-col items-center justify-center space-y-8">
             {/* Cat Eyes */}
-            <div className="cat-eyes">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="cat-eyes"
+            >
               <div className="cat-eye"></div>
               <div className="cat-eye"></div>
-            </div>
+            </motion.div>
 
             {/* Logo */}
             <motion.div
@@ -83,28 +88,22 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
 
             {/* Progress Bar */}
             <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: "200px" }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="relative"
+              className="relative w-64"
             >
               <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-neon-blue via-neon-purple to-neon-red rounded-full"
-                  style={{ width: `${progress}%` }}
-                  transition={{ duration: 0.1 }}
+                <div
+                  className="h-full bg-gradient-to-r from-neon-blue via-neon-purple to-neon-red rounded-full transition-all duration-200 ease-out"
+                  style={{ width: `${Math.round(progress)}%` }}
                 />
               </div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="text-center mt-2"
-              >
+              <div className="text-center mt-2">
                 <span className="font-orbitron text-white/60 text-xs">
-                  {progress}%
+                  {Math.round(progress)}%
                 </span>
-              </motion.div>
+              </div>
             </motion.div>
 
             {/* Loading Text */}
@@ -136,8 +135,20 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                   key={i}
                   className="absolute w-2 h-2 bg-neon-blue rounded-full opacity-20"
                   animate={{
-                    x: [0, Math.random() * window.innerWidth],
-                    y: [0, Math.random() * window.innerHeight],
+                    x: [
+                      0,
+                      Math.random() *
+                        (typeof window !== "undefined"
+                          ? window.innerWidth
+                          : 1200),
+                    ],
+                    y: [
+                      0,
+                      Math.random() *
+                        (typeof window !== "undefined"
+                          ? window.innerHeight
+                          : 800),
+                    ],
                     scale: [0, 1, 0],
                   }}
                   transition={{
@@ -146,8 +157,16 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                     delay: Math.random() * 2,
                   }}
                   style={{
-                    left: Math.random() * window.innerWidth,
-                    top: Math.random() * window.innerHeight,
+                    left:
+                      Math.random() *
+                      (typeof window !== "undefined"
+                        ? window.innerWidth
+                        : 1200),
+                    top:
+                      Math.random() *
+                      (typeof window !== "undefined"
+                        ? window.innerHeight
+                        : 800),
                   }}
                 />
               ))}
@@ -156,8 +175,20 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                   key={`purple-${i}`}
                   className="absolute w-3 h-3 bg-neon-purple rounded-full opacity-15"
                   animate={{
-                    x: [0, Math.random() * window.innerWidth],
-                    y: [0, Math.random() * window.innerHeight],
+                    x: [
+                      0,
+                      Math.random() *
+                        (typeof window !== "undefined"
+                          ? window.innerWidth
+                          : 1200),
+                    ],
+                    y: [
+                      0,
+                      Math.random() *
+                        (typeof window !== "undefined"
+                          ? window.innerHeight
+                          : 800),
+                    ],
                     scale: [0, 1, 0],
                   }}
                   transition={{
@@ -166,8 +197,16 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                     delay: Math.random() * 2,
                   }}
                   style={{
-                    left: Math.random() * window.innerWidth,
-                    top: Math.random() * window.innerHeight,
+                    left:
+                      Math.random() *
+                      (typeof window !== "undefined"
+                        ? window.innerWidth
+                        : 1200),
+                    top:
+                      Math.random() *
+                      (typeof window !== "undefined"
+                        ? window.innerHeight
+                        : 800),
                   }}
                 />
               ))}
