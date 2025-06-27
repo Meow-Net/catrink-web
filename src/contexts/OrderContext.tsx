@@ -33,6 +33,7 @@ export interface Order {
 
 interface OrderContextType {
   orders: Order[];
+  hasEverOrdered: boolean;
   addOrder: (order: Omit<Order, "id">) => string;
   getOrderByTrackingId: (trackingId: string) => Order | undefined;
   updateOrderStatus: (orderId: string, status: Order["status"]) => void;
@@ -55,6 +56,11 @@ interface OrderProviderProps {
 
 export const OrderProvider = ({ children }: OrderProviderProps) => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [hasEverOrdered, setHasEverOrdered] = useState<boolean>(() => {
+    // Load from localStorage on initialization
+    const savedFlag = localStorage.getItem("catrink_has_ever_ordered");
+    return savedFlag === "true";
+  });
 
   const generateTrackingId = (): string => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*";
@@ -71,6 +77,13 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
       id: Date.now().toString(),
     };
     setOrders((prev) => [newOrder, ...prev]);
+
+    // Mark that user has ever ordered and persist to localStorage
+    if (!hasEverOrdered) {
+      setHasEverOrdered(true);
+      localStorage.setItem("catrink_has_ever_ordered", "true");
+    }
+
     return newOrder.trackingId;
   };
 
@@ -88,6 +101,7 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
 
   const value: OrderContextType = {
     orders,
+    hasEverOrdered,
     addOrder,
     getOrderByTrackingId,
     updateOrderStatus,
