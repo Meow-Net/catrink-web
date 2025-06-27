@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import { useAuth } from "./AuthContext";
 
 export interface OrderItem {
   id: string;
@@ -55,12 +62,26 @@ interface OrderProviderProps {
 }
 
 export const OrderProvider = ({ children }: OrderProviderProps) => {
+  const { currentUser, isAdmin } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [hasEverOrdered, setHasEverOrdered] = useState<boolean>(() => {
-    // Load from localStorage on initialization
-    const savedFlag = localStorage.getItem("catrink_has_ever_ordered");
-    return savedFlag === "true";
-  });
+  const [hasEverOrdered, setHasEverOrdered] = useState<boolean>(false);
+
+  // Get user-specific storage key
+  const getUserStorageKey = () => {
+    const userEmail = currentUser?.email || (isAdmin ? "admin@catrink.in" : "");
+    return userEmail ? `catrink_has_ever_ordered_${userEmail}` : null;
+  };
+
+  // Load hasEverOrdered flag when user changes
+  useEffect(() => {
+    const storageKey = getUserStorageKey();
+    if (storageKey) {
+      const savedFlag = localStorage.getItem(storageKey);
+      setHasEverOrdered(savedFlag === "true");
+    } else {
+      setHasEverOrdered(false);
+    }
+  }, [currentUser, isAdmin]);
 
   const generateTrackingId = (): string => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*";
@@ -81,7 +102,10 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
     // Mark that user has ever ordered and persist to localStorage
     if (!hasEverOrdered) {
       setHasEverOrdered(true);
-      localStorage.setItem("catrink_has_ever_ordered", "true");
+      const storageKey = getUserStorageKey();
+      if (storageKey) {
+        localStorage.setItem(storageKey, "true");
+      }
     }
 
     return newOrder.trackingId;
