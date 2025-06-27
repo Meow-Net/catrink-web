@@ -10,47 +10,36 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    let fallbackTimer: NodeJS.Timeout;
+    console.log("Preloader started");
 
     const completeLoading = () => {
+      console.log("Preloader completing");
       setProgress(100);
       setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
+          console.log("Preloader calling onComplete");
           onComplete();
-        }, 500);
-      }, 500);
+        }, 300);
+      }, 200);
     };
 
-    const startProgress = () => {
-      timer = setInterval(() => {
-        setProgress((prev) => {
-          const newProgress = prev + 2;
-          if (newProgress >= 100) {
-            clearInterval(timer);
-            completeLoading();
-            return 100;
-          }
-          return newProgress;
-        });
-      }, 50);
-    };
-
-    // Start the progress after a short delay
-    const startDelay = setTimeout(startProgress, 100);
-
-    // Fallback: Force completion after 8 seconds maximum
-    fallbackTimer = setTimeout(() => {
-      console.log("Preloader fallback triggered");
-      if (timer) clearInterval(timer);
+    // Simplified approach: Complete loading after 3 seconds
+    const timer = setTimeout(() => {
       completeLoading();
-    }, 8000);
+    }, 3000);
+
+    // Progress animation
+    const progressTimer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 95) return prev; // Stop at 95% and let the timer complete it
+        return prev + Math.random() * 10 + 5; // Faster, more realistic progress
+      });
+    }, 200);
 
     return () => {
-      if (timer) clearInterval(timer);
-      clearTimeout(startDelay);
-      clearTimeout(fallbackTimer);
+      clearTimeout(timer);
+      clearInterval(progressTimer);
     };
   }, [onComplete]);
 
