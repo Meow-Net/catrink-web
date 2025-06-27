@@ -150,8 +150,13 @@ const Layout = ({ children }: LayoutProps) => {
               {currentUser || isAdmin ? (
                 <div className="relative" data-user-menu>
                   <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowUserMenu(!showUserMenu);
+                    }}
                     className="flex items-center space-x-2 p-2 rounded-lg glass-card hover:bg-white/10 transition-colors"
+                    type="button"
                   >
                     {isAdmin ? (
                       <Shield className="w-5 h-5 text-neon-cyan" />
