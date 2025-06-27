@@ -189,7 +189,9 @@ const Layout = ({ children }: LayoutProps) => {
                           <FileText className="w-4 h-4" />
                           <span>
                             My Orders{" "}
-                            {orders.length > 0 && `(${orders.length})`}
+                            {orders &&
+                              orders.length > 0 &&
+                              `(${orders.length})`}
                           </span>
                         </Link>
 
@@ -315,7 +317,7 @@ const Layout = ({ children }: LayoutProps) => {
                         >
                           <FileText className="w-4 h-4" />
                           <span>Orders</span>
-                          {orders.length > 0 && (
+                          {orders && orders.length > 0 && (
                             <span className="absolute -top-1 -right-1 w-4 h-4 bg-neon-red rounded-full text-xs flex items-center justify-center text-white font-bold">
                               {orders.length}
                             </span>
