@@ -42,7 +42,17 @@ interface ProfileData {
 }
 
 const Profile = () => {
-  const { currentUser, isAdmin } = useAuth();
+  // Add error handling for auth context
+  let currentUser: any = null;
+  let isAdmin = false;
+
+  try {
+    const authContext = useAuth();
+    currentUser = authContext.currentUser;
+    isAdmin = authContext.isAdmin;
+  } catch (error) {
+    console.error("Auth context error:", error);
+  }
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
