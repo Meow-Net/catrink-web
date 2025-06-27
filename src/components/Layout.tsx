@@ -40,7 +40,23 @@ const Layout = ({ children }: LayoutProps) => {
 
   useEffect(() => {
     setIsMenuOpen(false);
+    setShowUserMenu(false);
   }, [location]);
+
+  // Click outside handler for user menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showUserMenu && !target?.closest("[data-user-menu]")) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [showUserMenu]);
 
   const handleLogout = () => {
     setShowUserMenu(false);
@@ -122,7 +138,7 @@ const Layout = ({ children }: LayoutProps) => {
               </button>
 
               {currentUser || isAdmin ? (
-                <div className="relative">
+                <div className="relative" data-user-menu>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center space-x-2 p-2 rounded-lg glass-card hover:bg-white/10 transition-colors"
@@ -144,6 +160,7 @@ const Layout = ({ children }: LayoutProps) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute right-0 top-full mt-2 w-52 glass-card border border-white/10 rounded-lg py-2 z-50"
+                        data-user-menu
                       >
                         <Link
                           to="/profile"
