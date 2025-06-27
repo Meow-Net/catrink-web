@@ -42,6 +42,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Load session from localStorage on app start
+  useEffect(() => {
+    const savedSession = localStorage.getItem("catrink_session");
+    if (savedSession) {
+      try {
+        const session = JSON.parse(savedSession);
+        if (session.email === ADMIN_EMAIL) {
+          setIsAdmin(true);
+          const mockAdmin = {
+            uid: "admin-uid",
+            email: ADMIN_EMAIL,
+            displayName: "Admin",
+          } as User;
+          setCurrentUser(mockAdmin);
+        } else {
+          // For regular users, restore from saved session
+          setCurrentUser(session);
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        console.error("Error loading session:", error);
+        localStorage.removeItem("catrink_session");
+      }
+    }
+    setLoading(false);
+  }, []);
+
   // Admin credentials
   const ADMIN_EMAIL = "admin@catrink.in";
   const ADMIN_PASSWORD = "HardikSri@123";
@@ -61,30 +88,75 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         displayName: "Admin",
       } as User;
       setCurrentUser(mockAdmin);
+
+      // Save admin session to localStorage
+      localStorage.setItem(
+        "catrink_session",
+        JSON.stringify({
+          uid: mockAdmin.uid,
+          email: mockAdmin.email,
+          displayName: mockAdmin.displayName,
+          isAdmin: true,
+        }),
+      );
+
       return Promise.resolve({ user: mockAdmin });
     } else {
       // Regular Firebase authentication
       setIsAdmin(false);
-      return signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+
+      // Save user session to localStorage
+      if (result.user) {
+        localStorage.setItem(
+          "catrink_session",
+          JSON.stringify({
+            uid: result.user.uid,
+            email: result.user.email,
+            displayName: result.user.displayName,
+            isAdmin: false,
+          }),
+        );
+      }
+
+      return result;
     }
   };
 
   const logout = async () => {
     setIsAdmin(false);
     setCurrentUser(null);
+    // Clear session from localStorage
+    localStorage.removeItem("catrink_session");
     return signOut(auth);
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && user.email !== ADMIN_EMAIL) {
+      // Only update if we don't have a saved session or if this is a real Firebase user
+      const savedSession = localStorage.getItem("catrink_session");
+
+      if (user && user.email !== ADMIN_EMAIL && !savedSession) {
         setCurrentUser(user);
         setIsAdmin(false);
-      } else if (!user && !isAdmin) {
+        // Save new Firebase user session
+        localStorage.setItem(
+          "catrink_session",
+          JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            isAdmin: false,
+          }),
+        );
+      } else if (!user && !isAdmin && !savedSession) {
         setCurrentUser(null);
         setIsAdmin(false);
       }
-      setLoading(false);
+
+      if (!savedSession) {
+        setLoading(false);
+      }
     });
 
     return unsubscribe;
