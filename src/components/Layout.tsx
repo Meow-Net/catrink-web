@@ -443,6 +443,55 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         </div>
       </footer>
+
+      {/* Logout Confirmation Modal */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={cancelLogout}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="glass-card p-8 max-w-md w-full text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-neon-red/20 to-neon-purple/40 border border-neon-red/30 flex items-center justify-center">
+                <LogOut className="w-8 h-8 text-neon-red" />
+              </div>
+
+              <h3 className="font-orbitron font-bold text-2xl text-white mb-4">
+                Logout Confirmation
+              </h3>
+
+              <p className="text-white/70 mb-8 leading-relaxed">
+                Do you really want to logout? You'll need to sign in again to
+                access your account and track your orders.
+              </p>
+
+              <div className="flex space-x-4">
+                <button
+                  onClick={cancelLogout}
+                  className="flex-1 px-6 py-3 rounded-lg font-orbitron font-semibold text-white border-2 border-white/20 hover:bg-white/10 transition-all duration-300"
+                >
+                  No, Stay
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="flex-1 px-6 py-3 rounded-lg font-orbitron font-semibold text-white bg-gradient-to-r from-neon-red to-neon-purple hover:scale-105 transition-all duration-300"
+                >
+                  Yes, Logout
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
