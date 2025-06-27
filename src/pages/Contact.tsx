@@ -72,7 +72,9 @@ const Contact = () => {
         from_name: formData.name,
         from_email: formData.email,
         phone: formData.phone || "Not provided",
-        subject: formData.subject || "New Contact Form Submission from Catrink Website",
+        subject:
+          formData.subject ||
+          "New Contact Form Submission from Catrink Website",
         message: formData.message,
         to_email: "flayermc.in@gmail.com",
         reply_to: formData.email,
@@ -83,7 +85,7 @@ const Contact = () => {
         EMAILJS_SERVICE_ID,
         "template_default", // Using default template
         templateParams,
-        EMAILJS_PUBLIC_KEY
+        EMAILJS_PUBLIC_KEY,
       );
 
       setSuccess(true);
@@ -136,22 +138,18 @@ const Contact = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Form */}
             <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              <button
-                onClick={() => {
-                  // Open chatbot by clicking the chat button
-                  const chatButton = document.querySelector('[class*="fixed bottom-6 right-6"]');
-                  if (chatButton) {
-                    (chatButton as HTMLElement).click();
-                  }
-                }}
-                className="catrink-button text-lg"
-              >
-                Chat with MeowCat Now
-              </button>
-            </motion.div>
+              <div className="glass-card p-8">
+                <h2 className="font-orbitron font-bold text-3xl text-white mb-8">
+                  <span className="text-glow-purple">Send us a</span>{" "}
+                  <span className="text-glow-blue">Message</span>
+                </h2>
+
+                {/* Success Message */}
+                {success && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -420,7 +418,18 @@ const Contact = () => {
                     about flavors, ingredients, and more. Every response comes
                     with a friendly "Meow!" 🐱
                   </p>
-                  <button className="px-6 py-3 rounded-lg bg-gradient-to-r from-neon-purple to-neon-red text-white font-orbitron font-semibold hover:scale-105 transition-transform duration-200">
+                  <button
+                    onClick={() => {
+                      // Open chatbot by clicking the chat button
+                      const chatButton = document.querySelector(
+                        '[class*="fixed bottom-6 right-6"]',
+                      ) as HTMLElement;
+                      if (chatButton) {
+                        chatButton.click();
+                      }
+                    }}
+                    className="px-6 py-3 rounded-lg bg-gradient-to-r from-neon-purple to-neon-red text-white font-orbitron font-semibold hover:scale-105 transition-transform duration-200"
+                  >
                     Start Chat
                   </button>
                 </div>
