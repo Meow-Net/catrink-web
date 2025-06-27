@@ -20,6 +20,16 @@ const Index = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
+  // Additional fallback: Force hide preloader after 10 seconds
+  useEffect(() => {
+    const fallback = setTimeout(() => {
+      console.log("Index page fallback: Hiding preloader");
+      setShowPreloader(false);
+    }, 10000);
+
+    return () => clearTimeout(fallback);
+  }, []);
+
   if (showPreloader) {
     return <Preloader onComplete={() => setShowPreloader(false)} />;
   }
