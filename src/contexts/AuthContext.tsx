@@ -126,8 +126,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = async () => {
     setIsAdmin(false);
     setCurrentUser(null);
-    // Clear session from localStorage
+    // Clear session and order history from localStorage
     localStorage.removeItem("catrink_session");
+    localStorage.removeItem("catrink_has_ever_ordered");
     return signOut(auth);
   };
 
