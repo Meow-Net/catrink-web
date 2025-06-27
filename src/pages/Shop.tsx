@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { ShoppingCart, Plus, Minus, Star, Zap, Filter } from "lucide-react";
 import Layout from "@/components/Layout";
 import MeowChatbot from "@/components/MeowChatbot";
+import { useProducts } from "@/contexts/ProductContext";
 import { cn } from "@/lib/utils";
 
 interface Product {
@@ -24,90 +26,10 @@ interface CartItem {
 }
 
 const Shop = () => {
+  const { products } = useProducts();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isCartOpen, setIsCartOpen] = useState(false);
-
-  const products: Product[] = [
-    {
-      id: "1",
-      name: "Mango Bluster",
-      price: 4.99,
-      image: "🥭",
-      description:
-        "Tropical mango energy with a wild twist. Unleash your inner jungle cat with this exotic blend.",
-      flavor: "Mango Tropical",
-      energy: "High",
-      rating: 4.8,
-      reviews: 1247,
-      category: "tropical",
-    },
-    {
-      id: "2",
-      name: "Neon Night",
-      price: 5.49,
-      image: "🌙",
-      description:
-        "Dark berry fusion for nocturnal hunters. Perfect for late-night gaming sessions.",
-      flavor: "Dark Berry",
-      energy: "Ultra",
-      rating: 4.9,
-      reviews: 892,
-      category: "berry",
-    },
-    {
-      id: "3",
-      name: "Arctic Prowl",
-      price: 4.99,
-      image: "❄️",
-      description:
-        "Icy mint energy that'll sharpen your reflexes like a snow leopard.",
-      flavor: "Arctic Mint",
-      energy: "Medium",
-      rating: 4.7,
-      reviews: 634,
-      category: "mint",
-    },
-    {
-      id: "4",
-      name: "Citrus Strike",
-      price: 4.79,
-      image: "🍊",
-      description:
-        "Zesty citrus burst for lightning-fast reactions. The perfect hunting companion.",
-      flavor: "Citrus Mix",
-      energy: "High",
-      rating: 4.6,
-      reviews: 523,
-      category: "citrus",
-    },
-    {
-      id: "5",
-      name: "Purple Phantom",
-      price: 5.99,
-      image: "👻",
-      description:
-        "Mysterious grape energy with supernatural power. Become the phantom predator.",
-      flavor: "Purple Grape",
-      energy: "Ultra",
-      rating: 4.9,
-      reviews: 756,
-      category: "grape",
-    },
-    {
-      id: "6",
-      name: "Lightning Lime",
-      price: 4.59,
-      image: "⚡",
-      description:
-        "Electric lime energy that strikes like lightning. Quick, powerful, unstoppable.",
-      flavor: "Electric Lime",
-      energy: "High",
-      rating: 4.5,
-      reviews: 445,
-      category: "citrus",
-    },
-  ];
 
   const categories = [
     { id: "all", name: "All Flavors", count: products.length },
@@ -394,9 +316,12 @@ const Shop = () => {
                     ${getTotalPrice().toFixed(2)}
                   </span>
                 </div>
-                <button className="w-full catrink-button text-lg">
-                  Checkout with Stripe
-                </button>
+                <Link
+                  to="/checkout"
+                  className="w-full catrink-button text-lg block text-center"
+                >
+                  Checkout
+                </Link>
                 <p className="text-xs text-white/50 text-center mt-3">
                   Secure payment processing coming soon
                 </p>
