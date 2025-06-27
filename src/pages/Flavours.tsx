@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useProducts } from "@/contexts/ProductContext";
 import {
   ChevronLeft,
   ChevronRight,
@@ -29,72 +30,8 @@ interface Flavor {
 }
 
 const Flavours = () => {
+  const { flavors } = useProducts();
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  const flavors: Flavor[] = [
-    {
-      id: "mango-bluster",
-      name: "Mango Bluster",
-      tagline: "Tropical Thunder Unleashed",
-      description:
-        "Experience the explosive taste of tropical mango combined with our signature energy blend. This exotic fusion awakens your primal instincts while delivering a smooth, refreshing taste that'll transport you to a jungle paradise. Perfect for those who want to channel their inner wild cat.",
-      image: "🥭",
-      color: "from-orange-400 via-yellow-500 to-red-500",
-      ingredients: [
-        "Natural Mango Extract",
-        "Taurine",
-        "B-Vitamins",
-        "Natural Caffeine",
-        "Ginseng Root",
-        "Electrolytes",
-      ],
-      energyLevel: "High",
-      rating: 4.8,
-      reviews: 1247,
-      price: 4.99,
-      featured: true,
-    },
-    {
-      id: "neon-night",
-      name: "Neon Night",
-      tagline: "Hunt in the Darkness",
-      description:
-        "A mysterious dark berry blend designed for nocturnal predators. Rich blackberry and blueberry flavors create an intense taste experience that fuels late-night adventures and gaming sessions.",
-      image: "🌙",
-      color: "from-purple-600 via-indigo-600 to-blue-700",
-      ingredients: [
-        "Dark Berry Complex",
-        "Taurine",
-        "L-Theanine",
-        "Natural Caffeine",
-        "Adaptogens",
-      ],
-      energyLevel: "Ultra",
-      rating: 4.9,
-      reviews: 892,
-      price: 5.49,
-    },
-    {
-      id: "arctic-prowl",
-      name: "Arctic Prowl",
-      tagline: "Ice Cold Precision",
-      description:
-        "Channel the focus of a snow leopard with this icy mint energy drink. The refreshing arctic mint provides a cooling sensation while sharpening your reflexes.",
-      image: "❄️",
-      color: "from-cyan-400 via-blue-500 to-indigo-600",
-      ingredients: [
-        "Arctic Mint",
-        "Menthol",
-        "B-Vitamins",
-        "Natural Caffeine",
-        "Cooling Agents",
-      ],
-      energyLevel: "Medium",
-      rating: 4.7,
-      reviews: 634,
-      price: 4.99,
-    },
-  ];
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % flavors.length);
