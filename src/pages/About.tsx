@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Zap, Target, Award, Users, Heart, Sparkles } from "lucide-react";
 import Layout from "@/components/Layout";
 import MeowChatbot from "@/components/MeowChatbot";
@@ -379,7 +380,9 @@ const About = () => {
               Join millions of energy seekers who have discovered their true
               potential with Catrink. The hunt for greatness begins now.
             </p>
-            <button className="catrink-button text-lg">Explore Flavours</button>
+            <Link to="/flavours" className="catrink-button text-lg">
+              Explore Flavours
+            </Link>
           </motion.div>
         </div>
       </section>
