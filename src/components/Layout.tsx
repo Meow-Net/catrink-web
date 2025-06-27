@@ -27,7 +27,10 @@ const Layout = ({ children }: LayoutProps) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const { currentUser, logout, isAdmin } = useAuth();
-  const { orders, hasEverOrdered } = useOrders();
+  // Temporarily comment out orders context to debug
+  // const { orders, hasEverOrdered } = useOrders();
+  const orders: any[] = [];
+  const hasEverOrdered = false;
 
   useEffect(() => {
     const handleScroll = () => {
