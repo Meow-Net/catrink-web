@@ -233,12 +233,16 @@ const Flavours = () => {
                   {/* Featured Badge */}
                   {currentFlavor.featured && (
                     <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-neon-red to-neon-purple text-white text-sm font-orbitron font-semibold"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                     >
-                      <Star className="w-4 h-4 fill-current" />
-                      <span>Featured Flavor</span>
+                      <Link to="/contact" className="catrink-button text-lg">
+                        Contact Us for Updates
+                      </Link>
                     </motion.div>
                   )}
 
