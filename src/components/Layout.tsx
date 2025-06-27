@@ -24,6 +24,7 @@ const Layout = ({ children }: LayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const { currentUser, logout, isAdmin } = useAuth();
   const { orders } = useOrders();
@@ -41,13 +42,22 @@ const Layout = ({ children }: LayoutProps) => {
     setIsMenuOpen(false);
   }, [location]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
+    setShowUserMenu(false);
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = async () => {
     try {
       await logout();
-      setShowUserMenu(false);
+      setShowLogoutConfirm(false);
     } catch (error) {
       console.error("Logout error:", error);
     }
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   const navItems = [
@@ -221,18 +231,24 @@ const Layout = ({ children }: LayoutProps) => {
                   </Link>
                 ))}
                 <div className="pt-4 border-t border-white/10">
-                  <div className="flex items-center justify-between mb-4">
-                    <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
-                      <ShoppingCart className="w-5 h-5 text-white" />
-                    </button>
-
-                    {currentUser || isAdmin ? (
-                      <div className="flex items-center space-x-2">
+                  {currentUser || isAdmin ? (
+                    <div className="space-y-4">
+                      {/* User Info */}
+                      <div className="flex items-center justify-center">
                         <span className="text-white/70 text-sm">
+                          Logged in as:{" "}
                           {isAdmin
                             ? "Admin"
                             : currentUser?.email?.split("@")[0]}
                         </span>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center justify-center space-x-3">
+                        <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
+                          <ShoppingCart className="w-5 h-5 text-white" />
+                        </button>
+
                         {currentUser && orders.length > 0 && (
                           <Link
                             to="/track-order"
@@ -240,13 +256,12 @@ const Layout = ({ children }: LayoutProps) => {
                             onClick={() => setIsMenuOpen(false)}
                           >
                             <Package className="w-5 h-5 text-neon-blue" />
-                            {orders.length > 0 && (
-                              <span className="absolute -top-1 -right-1 w-4 h-4 bg-neon-red rounded-full text-xs flex items-center justify-center text-white font-bold">
-                                {orders.length}
-                              </span>
-                            )}
+                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-neon-red rounded-full text-xs flex items-center justify-center text-white font-bold">
+                              {orders.length}
+                            </span>
                           </Link>
                         )}
+
                         {isAdmin && (
                           <Link
                             to="/admin"
@@ -256,6 +271,7 @@ const Layout = ({ children }: LayoutProps) => {
                             <Shield className="w-5 h-5 text-neon-cyan" />
                           </Link>
                         )}
+
                         <button
                           onClick={handleLogout}
                           className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors"
@@ -263,25 +279,32 @@ const Layout = ({ children }: LayoutProps) => {
                           <LogOut className="w-5 h-5 text-white" />
                         </button>
                       </div>
-                    ) : (
-                      <div className="flex items-center space-x-2">
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-center">
+                        <button className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors">
+                          <ShoppingCart className="w-5 h-5 text-white" />
+                        </button>
+                      </div>
+                      <div className="flex flex-col space-y-2">
                         <Link
                           to="/login"
-                          className="px-4 py-2 rounded-lg glass-card hover:bg-white/10 transition-colors text-white text-sm"
+                          className="px-4 py-2 rounded-lg glass-card hover:bg-white/10 transition-colors text-white text-sm text-center"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           Login
                         </Link>
                         <Link
                           to="/signup"
-                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-neon-blue to-neon-purple text-white text-sm font-semibold"
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-neon-blue to-neon-purple text-white text-sm font-semibold text-center"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           Sign Up
                         </Link>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
