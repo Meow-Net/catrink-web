@@ -27,10 +27,17 @@ const Layout = ({ children }: LayoutProps) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const { currentUser, logout, isAdmin } = useAuth();
-  // Temporarily comment out orders context to debug
-  // const { orders, hasEverOrdered } = useOrders();
-  const orders: any[] = [];
-  const hasEverOrdered = false;
+
+  // Add error handling for orders context
+  let orders: any[] = [];
+  let hasEverOrdered = false;
+  try {
+    const ordersContext = useOrders();
+    orders = ordersContext.orders || [];
+    hasEverOrdered = ordersContext.hasEverOrdered || false;
+  } catch (error) {
+    console.error("Orders context error:", error);
+  }
 
   useEffect(() => {
     const handleScroll = () => {
