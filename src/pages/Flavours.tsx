@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -314,10 +315,13 @@ const Flavours = () => {
                   </div>
 
                   {/* CTA Button */}
-                  <button className="catrink-button w-full text-lg flex items-center justify-center space-x-2">
+                  <Link
+                    to="/shop"
+                    className="catrink-button w-full text-lg flex items-center justify-center space-x-2"
+                  >
                     <ShoppingCart className="w-5 h-5" />
                     <span>Add to Cart - ${currentFlavor.price}</span>
-                  </button>
+                  </Link>
                 </div>
               </motion.div>
             </AnimatePresence>
