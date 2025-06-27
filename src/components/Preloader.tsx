@@ -11,6 +11,17 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
+    let fallbackTimer: NodeJS.Timeout;
+
+    const completeLoading = () => {
+      setProgress(100);
+      setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(() => {
+          onComplete();
+        }, 500);
+      }, 500);
+    };
 
     const startProgress = () => {
       timer = setInterval(() => {
@@ -18,13 +29,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
           const newProgress = prev + 2;
           if (newProgress >= 100) {
             clearInterval(timer);
-            // Complete the loading process
-            setTimeout(() => {
-              setIsVisible(false);
-              setTimeout(() => {
-                onComplete();
-              }, 500);
-            }, 500);
+            completeLoading();
             return 100;
           }
           return newProgress;
@@ -35,9 +40,17 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
     // Start the progress after a short delay
     const startDelay = setTimeout(startProgress, 100);
 
+    // Fallback: Force completion after 8 seconds maximum
+    fallbackTimer = setTimeout(() => {
+      console.log("Preloader fallback triggered");
+      if (timer) clearInterval(timer);
+      completeLoading();
+    }, 8000);
+
     return () => {
       if (timer) clearInterval(timer);
       clearTimeout(startDelay);
+      clearTimeout(fallbackTimer);
     };
   }, [onComplete]);
 
