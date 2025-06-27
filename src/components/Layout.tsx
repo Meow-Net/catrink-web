@@ -11,9 +11,9 @@ import {
   LogOut,
   Shield,
   Package,
+  FileText,
+  Settings,
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useOrders } from "@/contexts/OrderContext";
 import { cn } from "@/lib/utils";
 
 interface LayoutProps {
