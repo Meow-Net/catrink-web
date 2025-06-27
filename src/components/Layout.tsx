@@ -27,7 +27,7 @@ const Layout = ({ children }: LayoutProps) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const { currentUser, logout, isAdmin } = useAuth();
-  const { orders } = useOrders();
+  const { orders, hasEverOrdered } = useOrders();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -145,14 +145,17 @@ const Layout = ({ children }: LayoutProps) => {
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute right-0 top-full mt-2 w-48 glass-card border border-white/10 rounded-lg py-2 z-50"
                       >
-                        {currentUser && orders.length > 0 && (
+                        {currentUser && hasEverOrdered && (
                           <Link
                             to="/track-order"
                             className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
                             onClick={() => setShowUserMenu(false)}
                           >
                             <Package className="w-4 h-4" />
-                            <span>Track Orders ({orders.length})</span>
+                            <span>
+                              Track Orders{" "}
+                              {orders.length > 0 && `(${orders.length})`}
+                            </span>
                           </Link>
                         )}
                         {isAdmin && (
@@ -249,16 +252,18 @@ const Layout = ({ children }: LayoutProps) => {
                           <ShoppingCart className="w-5 h-5 text-white" />
                         </button>
 
-                        {currentUser && orders.length > 0 && (
+                        {currentUser && hasEverOrdered && (
                           <Link
                             to="/track-order"
                             className="p-2 rounded-lg glass-card hover:bg-white/10 transition-colors relative"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             <Package className="w-5 h-5 text-neon-blue" />
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-neon-red rounded-full text-xs flex items-center justify-center text-white font-bold">
-                              {orders.length}
-                            </span>
+                            {orders.length > 0 && (
+                              <span className="absolute -top-1 -right-1 w-4 h-4 bg-neon-red rounded-full text-xs flex items-center justify-center text-white font-bold">
+                                {orders.length}
+                              </span>
+                            )}
                           </Link>
                         )}
 
