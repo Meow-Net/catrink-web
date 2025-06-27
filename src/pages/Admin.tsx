@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useProducts } from "@/contexts/ProductContext";
 import {
   Shield,
   Plus,
@@ -53,6 +54,16 @@ interface Flavor {
 
 const Admin = () => {
   const { isAdmin, logout } = useAuth();
+  const {
+    products,
+    flavors,
+    deleteProduct,
+    deleteFlavor,
+    addProduct,
+    addFlavor,
+    updateProduct,
+    updateFlavor,
+  } = useProducts();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("products");
   const [showModal, setShowModal] = useState(false);
@@ -60,31 +71,6 @@ const Admin = () => {
     "product",
   );
   const [editingItem, setEditingItem] = useState<any>(null);
-
-  // Sample data - in real app, this would come from Firestore
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: "1",
-      name: "Mango Bluster",
-      price: 4.99,
-      description:
-        "Tropical mango energy with a wild twist. Unleash your inner jungle cat.",
-      flavor: "Mango Tropical",
-      energy: "High",
-      category: "tropical",
-      image: "🥭",
-    },
-    {
-      id: "2",
-      name: "Neon Night",
-      price: 5.49,
-      description: "Dark berry fusion for nocturnal hunters.",
-      flavor: "Dark Berry",
-      energy: "Ultra",
-      category: "berry",
-      image: "🌙",
-    },
-  ]);
 
   const [coupons, setCoupons] = useState<Coupon[]>([
     {
@@ -108,30 +94,6 @@ const Admin = () => {
       currentUses: 12,
       expiryDate: "2024-06-30",
       active: true,
-    },
-  ]);
-
-  const [flavors, setFlavors] = useState<Flavor[]>([
-    {
-      id: "1",
-      name: "Mango Bluster",
-      description: "Tropical thunder unleashed",
-      color: "from-orange-400 via-yellow-500 to-red-500",
-      ingredients: [
-        "Mango Extract",
-        "Taurine",
-        "B-Vitamins",
-        "Natural Caffeine",
-      ],
-      energy: "High",
-    },
-    {
-      id: "2",
-      name: "Arctic Prowl",
-      description: "Ice cold precision",
-      color: "from-cyan-400 via-blue-500 to-indigo-600",
-      ingredients: ["Arctic Mint", "Menthol", "B-Vitamins", "Cooling Agents"],
-      energy: "Medium",
     },
   ]);
 
@@ -165,13 +127,13 @@ const Admin = () => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       switch (type) {
         case "products":
-          setProducts(products.filter((p) => p.id !== id));
+          deleteProduct(id);
           break;
         case "coupons":
           setCoupons(coupons.filter((c) => c.id !== id));
           break;
         case "flavors":
-          setFlavors(flavors.filter((f) => f.id !== id));
+          deleteFlavor(id);
           break;
       }
     }
