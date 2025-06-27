@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useOrders } from "@/contexts/OrderContext";
 import {
   ShoppingCart,
   Plus,
@@ -47,6 +48,9 @@ interface PaymentInfo {
 }
 
 const Checkout = () => {
+  const navigate = useNavigate();
+  const { addOrder, generateTrackingId } = useOrders();
+
   // Mock cart items - in real app, this would come from cart context
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {
@@ -133,12 +137,49 @@ const Checkout = () => {
       return;
     }
 
+    if (!billingInfo.fullName || !billingInfo.email || !billingInfo.street) {
+      alert("Please fill in all required billing information");
+      return;
+    }
+
     setProcessing(true);
+
     // Simulate payment processing
     setTimeout(() => {
+      // Generate tracking ID
+      const trackingId = generateTrackingId();
+
+      // Create order
+      const orderData = {
+        trackingId,
+        items: cartItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+        })),
+        totalAmount: shippingMethod === "pickup" ? total - shipping : total,
+        status: "processing" as const,
+        orderDate: new Date(),
+        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+        shippingAddress: {
+          fullName: billingInfo.fullName,
+          street: billingInfo.street,
+          city: billingInfo.city,
+          state: billingInfo.state,
+          zipCode: billingInfo.zipCode,
+          country: billingInfo.country,
+        },
+        paymentMethod: paymentInfo.method,
+        couponApplied: appliedCoupon,
+      };
+
+      addOrder(orderData);
       setProcessing(false);
-      // Redirect to success page
-      window.location.href = "/order-success";
+
+      // Redirect to success page with tracking ID
+      navigate(`/order-success?tracking=${trackingId}`);
     }, 3000);
   };
 
