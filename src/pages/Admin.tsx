@@ -571,23 +571,38 @@ const Admin = () => {
                               : `$${coupon.discount} off`}
                           </p>
                         </div>
-                        <div
+                        <button
+                          onClick={() => toggleCouponStatus(coupon.id)}
                           className={cn(
-                            "px-2 py-1 rounded-full text-xs font-semibold",
+                            "px-2 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors",
                             coupon.active
-                              ? "bg-green-500/20 text-green-400"
-                              : "bg-red-500/20 text-red-400",
+                              ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                              : "bg-red-500/20 text-red-400 hover:bg-red-500/30",
                           )}
                         >
                           {coupon.active ? "Active" : "Inactive"}
-                        </div>
+                        </button>
                       </div>
-                      <div className="space-y-2 text-sm text-white/70">
+                      <div className="space-y-2 text-sm text-white/70 mb-4">
                         <p>Min Order: ${coupon.minOrder}</p>
                         <p>
                           Uses: {coupon.currentUses}/{coupon.maxUses}
                         </p>
                         <p>Expires: {coupon.expiryDate}</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => openModal("coupon", coupon)}
+                          className="flex-1 px-3 py-2 bg-neon-cyan/20 text-neon-cyan rounded-lg hover:bg-neon-cyan/30 transition-colors flex items-center justify-center"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteItem("coupons", coupon.id)}
+                          className="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center justify-center"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   ))}
