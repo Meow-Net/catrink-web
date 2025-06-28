@@ -83,6 +83,16 @@ const Admin = () => {
     featured: false,
   });
 
+  const [couponForm, setCouponForm] = useState({
+    code: "",
+    discount: "",
+    type: "percentage" as "percentage" | "fixed",
+    minOrder: "",
+    maxUses: "",
+    expiryDate: "",
+    active: true,
+  });
+
   const [coupons, setCoupons] = useState<Coupon[]>([
     {
       id: "1",
@@ -107,6 +117,23 @@ const Admin = () => {
       active: true,
     },
   ]);
+
+  // Load coupons from localStorage on mount
+  useEffect(() => {
+    const savedCoupons = localStorage.getItem("catrink_coupons");
+    if (savedCoupons) {
+      try {
+        setCoupons(JSON.parse(savedCoupons));
+      } catch (error) {
+        console.error("Error loading coupons:", error);
+      }
+    }
+  }, []);
+
+  // Save coupons to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("catrink_coupons", JSON.stringify(coupons));
+  }, [coupons]);
 
   useEffect(() => {
     if (!isAdmin) {
