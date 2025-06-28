@@ -126,21 +126,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = async () => {
-    setIsAdmin(false);
+    await signOut(auth);
     setCurrentUser(null);
-    // Clear session from localStorage (keep order history for user)
+    setIsAdmin(false);
+    // Clear localStorage session
     localStorage.removeItem("catrink_session");
-    return signOut(auth);
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // Only update if we don't have a saved session or if this is a real Firebase user
-      const savedSession = localStorage.getItem("catrink_session");
+  const resetPassword = async (email: string) => {
+    return sendPasswordResetEmail(auth, email);
+  };
 
-      if (user && user.email !== ADMIN_EMAIL && !savedSession) {
-        setCurrentUser(user);
-        setIsAdmin(false);
+  const value = {
+    currentUser,
+    login,
+    signup,
+    logout,
+    resetPassword,
+    loading,
+    isAdmin,
+  };
         // Save new Firebase user session
         localStorage.setItem(
           "catrink_session",
