@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useOrders } from "@/contexts/OrderContext";
+import emailjs from "@emailjs/browser";
 import {
   ShoppingCart,
   Plus,
