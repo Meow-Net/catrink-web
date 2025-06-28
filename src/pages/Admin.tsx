@@ -213,6 +213,28 @@ const Admin = () => {
           featured: false,
         });
       }
+    } else if (type === "coupon") {
+      if (item) {
+        setCouponForm({
+          code: item.code,
+          discount: item.discount.toString(),
+          type: item.type,
+          minOrder: item.minOrder.toString(),
+          maxUses: item.maxUses.toString(),
+          expiryDate: item.expiryDate,
+          active: item.active,
+        });
+      } else {
+        setCouponForm({
+          code: "",
+          discount: "",
+          type: "percentage",
+          minOrder: "",
+          maxUses: "",
+          expiryDate: "",
+          active: true,
+        });
+      }
     }
 
     setShowModal(true);
