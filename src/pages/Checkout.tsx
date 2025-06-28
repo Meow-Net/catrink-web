@@ -222,6 +222,10 @@ const Checkout = () => {
       };
 
       addOrder(orderData);
+
+      // Send order notification email to admin
+      sendOrderNotificationEmail(orderData);
+
       setProcessing(false);
 
       // Redirect to success page with tracking ID
