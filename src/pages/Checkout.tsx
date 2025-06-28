@@ -59,38 +59,77 @@ const Checkout = () => {
   // Send order notification email to admin
   const sendOrderNotificationEmail = async (orderData: any) => {
     try {
+      // Format items list for email
+      const itemsList = orderData.items.map((item: any) =>
+        `• ${item.quantity}x ${item.name} ${item.image} - $${(item.price * item.quantity).toFixed(2)}`
+      ).join('\n');
+
+      // Calculate totals
+      const subtotal = orderData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+      const shippingCost = shippingMethod === "pickup" ? 0 : shipping;
+      const discountAmount = orderData.couponApplied ? orderData.couponApplied.discount : 0;
+
+      const emailMessage = `
+🐱 NEW CATRINK ORDER RECEIVED! 🐱
+
+ORDER DETAILS:
+═══════════════════════════
+📦 Order ID: ${orderData.trackingId}
+📅 Order Date: ${orderData.orderDate.toLocaleDateString()}
+🚚 Delivery Method: ${shippingMethod === "pickup" ? "Store Pickup" : "Home Delivery"}
+💳 Payment Method: ${orderData.paymentMethod.toUpperCase()}
+
+CUSTOMER INFO:
+═══════════════════════════
+👤 Name: ${orderData.shippingAddress.fullName}
+📧 Email: ${billingInfo.email || "Not provided"}
+📱 Phone: ${billingInfo.phone || "Not provided"}
+
+SHIPPING ADDRESS:
+═══════════════════════════
+📍 ${orderData.shippingAddress.street}
+   ${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zipCode}
+   ${orderData.shippingAddress.country}
+
+ITEMS ORDERED:
+═══════════════════════════
+${itemsList}
+
+PRICING BREAKDOWN:
+═══════════════════════════
+💰 Subtotal: $${subtotal.toFixed(2)}
+🚚 Shipping: $${shippingCost.toFixed(2)}
+${orderData.couponApplied ? `🎟️ Coupon (${orderData.couponApplied.code}): -$${discountAmount.toFixed(2)}` : ''}
+─────────────────────────────
+💵 TOTAL: $${orderData.totalAmount.toFixed(2)}
+
+📅 Estimated Delivery: ${orderData.estimatedDelivery.toLocaleDateString()}
+
+🎯 This order is ready for processing!
+Meow! 🐱
+      `;
+
       const emailParams = {
         to_email: "flayermc.in@gmail.com",
-        subject: `New Catrink Order - ${orderData.trackingId}`,
-        order_id: orderData.trackingId,
-        customer_name: orderData.shippingAddress.fullName,
-        customer_email: billingInfo.email || "Not provided",
-        customer_phone: billingInfo.phone || "Not provided",
-        order_date: orderData.orderDate.toLocaleDateString(),
-        payment_method: orderData.paymentMethod,
-        shipping_method: shippingMethod,
-        total_amount: `$${orderData.totalAmount.toFixed(2)}`,
-        items_list: orderData.items
-          .map(
-            (item: any) =>
-              `${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}`,
-          )
-          .join("\n"),
-        shipping_address: `${orderData.shippingAddress.street}, ${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zipCode}, ${orderData.shippingAddress.country}`,
-        coupon_info: orderData.couponApplied
-          ? `Coupon: ${orderData.couponApplied.code} - $${orderData.couponApplied.discount} discount`
-          : "No coupon applied",
-        estimated_delivery: orderData.estimatedDelivery.toLocaleDateString(),
+        from_name: "Catrink Order System",
+        subject: `🐱 New Order #${orderData.trackingId} - $${orderData.totalAmount.toFixed(2)}`,
+        message: emailMessage,
+        reply_to: billingInfo.email || "noreply@catrink.com"
       };
 
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         "template_c2wun1e", // Using the same template as contact form
         emailParams,
-        EMAILJS_PUBLIC_KEY,
+        EMAILJS_PUBLIC_KEY
       );
 
       console.log("Order notification email sent successfully");
+    } catch (error) {
+      console.error("Failed to send order notification email:", error);
+      // Don't fail the order if email fails
+    }
+  };
     } catch (error) {
       console.error("Failed to send order notification email:", error);
       // Don't fail the order if email fails
