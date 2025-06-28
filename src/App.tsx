@@ -13,6 +13,7 @@ import Shop from "./pages/Shop";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import PasswordReset from "./pages/PasswordReset";
 import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
