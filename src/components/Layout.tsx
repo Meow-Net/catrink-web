@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOrders } from "@/contexts/OrderContext";
 
 interface LayoutProps {
   children: React.ReactNode;
