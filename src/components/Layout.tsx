@@ -298,15 +298,6 @@ const Layout = ({ children }: LayoutProps) => {
                       {/* Action Buttons */}
                       <div className="grid grid-cols-2 gap-3 mb-4">
                         <Link
-                          to="/profile"
-                          className="flex items-center space-x-2 px-4 py-3 rounded-lg glass-card hover:bg-white/10 transition-colors text-white text-sm"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <Settings className="w-4 h-4" />
-                          <span>Profile</span>
-                        </Link>
-
-                        <Link
                           to="/orders"
                           className="flex items-center space-x-2 px-4 py-3 rounded-lg glass-card hover:bg-white/10 transition-colors text-white text-sm relative"
                           onClick={() => setIsMenuOpen(false)}
