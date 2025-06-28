@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useProducts } from "@/contexts/ProductContext";
+import { useProducts, Product, Flavor } from "@/contexts/ProductContext";
 import {
   Shield,
   Plus,
@@ -14,22 +14,15 @@ import {
   Save,
   X,
   LogOut,
+  Image,
+  Palette,
+  Zap,
+  Users,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { cn } from "@/lib/utils";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  flavor: string;
-  energy: "Medium" | "High" | "Ultra";
-  category: string;
-  image: string;
-}
 
 interface Coupon {
   id: string;
@@ -41,15 +34,6 @@ interface Coupon {
   currentUses: number;
   expiryDate: string;
   active: boolean;
-}
-
-interface Flavor {
-  id: string;
-  name: string;
-  description: string;
-  color: string;
-  ingredients: string[];
-  energy: "Medium" | "High" | "Ultra";
 }
 
 const Admin = () => {
@@ -71,6 +55,33 @@ const Admin = () => {
     "product",
   );
   const [editingItem, setEditingItem] = useState<any>(null);
+
+  // Form states
+  const [productForm, setProductForm] = useState({
+    name: "",
+    price: "",
+    image: "",
+    description: "",
+    flavor: "",
+    energy: "Medium" as "Medium" | "High" | "Ultra",
+    rating: "",
+    reviews: "",
+    category: "",
+  });
+
+  const [flavorForm, setFlavorForm] = useState({
+    name: "",
+    tagline: "",
+    description: "",
+    image: "",
+    color: "",
+    ingredients: "",
+    energyLevel: "Medium" as "Medium" | "High" | "Ultra",
+    rating: "",
+    reviews: "",
+    price: "",
+    featured: false,
+  });
 
   const [coupons, setCoupons] = useState<Coupon[]>([
     {
@@ -100,21 +111,83 @@ const Admin = () => {
   useEffect(() => {
     if (!isAdmin) {
       navigate("/login");
+      return;
     }
   }, [isAdmin, navigate]);
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/");
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    await logout();
+    navigate("/");
   };
+
+  const tabs = [
+    { id: "products", label: "Products", icon: Package },
+    { id: "flavors", label: "Flavors", icon: Droplets },
+    { id: "coupons", label: "Coupons", icon: Tag },
+  ];
 
   const openModal = (type: "product" | "coupon" | "flavor", item?: any) => {
     setModalType(type);
-    setEditingItem(item || null);
+    setEditingItem(item);
+
+    if (type === "product") {
+      if (item) {
+        setProductForm({
+          name: item.name,
+          price: item.price.toString(),
+          image: item.image,
+          description: item.description,
+          flavor: item.flavor,
+          energy: item.energy,
+          rating: item.rating.toString(),
+          reviews: item.reviews.toString(),
+          category: item.category,
+        });
+      } else {
+        setProductForm({
+          name: "",
+          price: "",
+          image: "",
+          description: "",
+          flavor: "",
+          energy: "Medium",
+          rating: "",
+          reviews: "",
+          category: "",
+        });
+      }
+    } else if (type === "flavor") {
+      if (item) {
+        setFlavorForm({
+          name: item.name,
+          tagline: item.tagline,
+          description: item.description,
+          image: item.image,
+          color: item.color,
+          ingredients: item.ingredients.join(", "),
+          energyLevel: item.energyLevel,
+          rating: item.rating.toString(),
+          reviews: item.reviews.toString(),
+          price: item.price.toString(),
+          featured: item.featured || false,
+        });
+      } else {
+        setFlavorForm({
+          name: "",
+          tagline: "",
+          description: "",
+          image: "",
+          color: "",
+          ingredients: "",
+          energyLevel: "Medium",
+          rating: "",
+          reviews: "",
+          price: "",
+          featured: false,
+        });
+      }
+    }
+
     setShowModal(true);
   };
 
@@ -123,38 +196,79 @@ const Admin = () => {
     setEditingItem(null);
   };
 
+  const handleSaveProduct = () => {
+    if (!productForm.name || !productForm.price) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    const productData = {
+      name: productForm.name,
+      price: parseFloat(productForm.price),
+      image: productForm.image || "🥤",
+      description: productForm.description,
+      flavor: productForm.flavor,
+      energy: productForm.energy,
+      rating: parseFloat(productForm.rating) || 4.5,
+      reviews: parseInt(productForm.reviews) || 0,
+      category: productForm.category,
+    };
+
+    if (editingItem) {
+      updateProduct(editingItem.id, productData);
+    } else {
+      addProduct(productData);
+    }
+
+    closeModal();
+    alert(
+      `Product ${editingItem ? "updated" : "added"} successfully! Meow! 🐱`,
+    );
+  };
+
+  const handleSaveFlavor = () => {
+    if (!flavorForm.name || !flavorForm.price) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    const flavorData = {
+      name: flavorForm.name,
+      tagline: flavorForm.tagline,
+      description: flavorForm.description,
+      image: flavorForm.image || "🥤",
+      color: flavorForm.color || "from-blue-400 to-purple-500",
+      ingredients: flavorForm.ingredients.split(",").map((ing) => ing.trim()),
+      energyLevel: flavorForm.energyLevel,
+      rating: parseFloat(flavorForm.rating) || 4.5,
+      reviews: parseInt(flavorForm.reviews) || 0,
+      price: parseFloat(flavorForm.price),
+      featured: flavorForm.featured,
+    };
+
+    if (editingItem) {
+      updateFlavor(editingItem.id, flavorData);
+    } else {
+      addFlavor(flavorData);
+    }
+
+    closeModal();
+    alert(`Flavor ${editingItem ? "updated" : "added"} successfully! Meow! 🐱`);
+  };
+
   const deleteItem = (type: string, id: string) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      switch (type) {
-        case "products":
-          deleteProduct(id);
-          break;
-        case "coupons":
-          setCoupons(coupons.filter((c) => c.id !== id));
-          break;
-        case "flavors":
-          deleteFlavor(id);
-          break;
+    if (confirm("Are you sure you want to delete this item?")) {
+      if (type === "products") {
+        deleteProduct(id);
+      } else if (type === "flavors") {
+        deleteFlavor(id);
       }
+      alert("Item deleted successfully!");
     }
   };
 
   if (!isAdmin) {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-orbitron text-white mb-2">
-              Access Denied
-            </h1>
-            <p className="text-white/60">
-              You need admin privileges to access this page.
-            </p>
-          </div>
-        </div>
-      </Layout>
-    );
+    return null;
   }
 
   return (
@@ -166,33 +280,39 @@ const Admin = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex justify-between items-center mb-12"
+            className="mb-12"
           >
-            <div>
-              <h1 className="font-orbitron font-black text-5xl text-white mb-4">
-                <span className="text-glow-cyan">Admin</span>{" "}
-                <span className="text-glow-blue">Panel</span>
-              </h1>
-              <p className="text-xl text-white/70">
-                Manage your Catrink empire with feline precision
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="font-orbitron font-black text-5xl text-white mb-4">
+                  <span className="text-glow-blue">Admin</span>{" "}
+                  <span className="text-glow-purple">Dashboard</span>
+                </h1>
+                <p className="text-xl text-white/70">
+                  Manage products, flavors, and coupons for Catrink
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 px-4 py-2 glass-card">
+                  <Shield className="w-5 h-5 text-neon-cyan" />
+                  <span className="text-white font-orbitron">
+                    Administrator
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 px-6 py-3 rounded-lg glass-card hover:bg-red-500/20 transition-colors text-white"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
-            </button>
           </motion.div>
 
-          {/* Tab Navigation */}
+          {/* Tabs */}
           <div className="flex space-x-4 mb-8">
-            {[
-              { id: "products", label: "Products", icon: Package },
-              { id: "coupons", label: "Coupons", icon: Tag },
-              { id: "flavors", label: "Flavors", icon: Droplets },
-            ].map((tab) => (
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -240,6 +360,10 @@ const Admin = () => {
                         <p>Energy: {product.energy}</p>
                         <p>Category: {product.category}</p>
                         <p>Flavor: {product.flavor}</p>
+                        <p>
+                          Rating: {product.rating} ⭐ ({product.reviews}{" "}
+                          reviews)
+                        </p>
                       </div>
                       <div className="flex space-x-2">
                         <button
@@ -250,6 +374,65 @@ const Admin = () => {
                         </button>
                         <button
                           onClick={() => deleteItem("products", product.id)}
+                          className="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center justify-center"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Flavors Tab */}
+            {activeTab === "flavors" && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="font-orbitron font-bold text-2xl text-white">
+                    Flavors Management
+                  </h2>
+                  <button
+                    onClick={() => openModal("flavor")}
+                    className="catrink-button flex items-center space-x-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    <span>Add Flavor</span>
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {flavors.map((flavor) => (
+                    <div key={flavor.id} className="glass-card p-6">
+                      <div className="text-center mb-4">
+                        <div className="text-4xl mb-2">{flavor.image}</div>
+                        <h3 className="font-orbitron font-bold text-white">
+                          {flavor.name}
+                        </h3>
+                        <p className="text-neon-purple text-sm">
+                          {flavor.tagline}
+                        </p>
+                        <p className="text-neon-cyan">${flavor.price}</p>
+                      </div>
+                      <div className="space-y-2 text-sm text-white/70 mb-4">
+                        <p>Energy: {flavor.energyLevel}</p>
+                        <p>Featured: {flavor.featured ? "Yes" : "No"}</p>
+                        <p>
+                          Ingredients:{" "}
+                          {flavor.ingredients.slice(0, 3).join(", ")}
+                        </p>
+                        <p>
+                          Rating: {flavor.rating} ⭐ ({flavor.reviews} reviews)
+                        </p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => openModal("flavor", flavor)}
+                          className="flex-1 px-3 py-2 bg-neon-purple/20 text-neon-purple rounded-lg hover:bg-neon-purple/30 transition-colors flex items-center justify-center"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteItem("flavors", flavor.id)}
                           className="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center justify-center"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -301,98 +484,12 @@ const Admin = () => {
                           {coupon.active ? "Active" : "Inactive"}
                         </div>
                       </div>
-                      <div className="space-y-2 text-sm text-white/70 mb-4">
+                      <div className="space-y-2 text-sm text-white/70">
                         <p>Min Order: ${coupon.minOrder}</p>
                         <p>
                           Uses: {coupon.currentUses}/{coupon.maxUses}
                         </p>
                         <p>Expires: {coupon.expiryDate}</p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => openModal("coupon", coupon)}
-                          className="flex-1 px-3 py-2 bg-neon-purple/20 text-neon-purple rounded-lg hover:bg-neon-purple/30 transition-colors flex items-center justify-center"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => deleteItem("coupons", coupon.id)}
-                          className="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center justify-center"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Flavors Tab */}
-            {activeTab === "flavors" && (
-              <div>
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="font-orbitron font-bold text-2xl text-white">
-                    Flavors Management
-                  </h2>
-                  <button
-                    onClick={() => openModal("flavor")}
-                    className="catrink-button flex items-center space-x-2"
-                  >
-                    <Plus className="w-5 h-5" />
-                    <span>Add Flavor</span>
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {flavors.map((flavor) => (
-                    <div key={flavor.id} className="glass-card p-6">
-                      <div className="flex items-center space-x-4 mb-4">
-                        <div
-                          className="w-16 h-16 rounded-full flex items-center justify-center"
-                          style={{
-                            background: `linear-gradient(135deg, ${flavor.color.replace("from-", "").replace(" via-", ", ").replace(" to-", ", ")})`,
-                          }}
-                        >
-                          <Droplets className="w-8 h-8 text-white" />
-                        </div>
-                        <div>
-                          <h3 className="font-orbitron font-bold text-xl text-white">
-                            {flavor.name}
-                          </h3>
-                          <p className="text-neon-cyan">{flavor.description}</p>
-                          <p className="text-white/60 text-sm">
-                            Energy: {flavor.energy}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mb-4">
-                        <h4 className="text-white/80 text-sm font-semibold mb-2">
-                          Ingredients:
-                        </h4>
-                        <div className="flex flex-wrap gap-1">
-                          {flavor.ingredients.map((ingredient, index) => (
-                            <span
-                              key={index}
-                              className="px-2 py-1 bg-white/10 rounded-full text-xs text-white/70"
-                            >
-                              {ingredient}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => openModal("flavor", flavor)}
-                          className="flex-1 px-3 py-2 bg-neon-cyan/20 text-neon-cyan rounded-lg hover:bg-neon-cyan/30 transition-colors flex items-center justify-center"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => deleteItem("flavors", flavor.id)}
-                          className="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center justify-center"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
                     </div>
                   ))}
@@ -417,7 +514,7 @@ const Admin = () => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="glass-card p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
+              className="glass-card p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
@@ -432,56 +529,439 @@ const Admin = () => {
                 </button>
               </div>
 
-              {/* Form content would go here - simplified for demo */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-white/80 text-sm font-semibold mb-2">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue"
-                    placeholder={`Enter ${modalType} name`}
-                  />
-                </div>
-                {modalType === "product" && (
-                  <>
+              {/* Product Form */}
+              {modalType === "product" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-white/80 text-sm font-semibold mb-2">
-                        Price
+                        Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={productForm.name}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue"
+                        placeholder="Product name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Price *
                       </label>
                       <input
                         type="number"
                         step="0.01"
+                        value={productForm.price}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            price: e.target.value,
+                          }))
+                        }
                         className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-purple"
                         placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Image (Emoji)
+                      </label>
+                      <input
+                        type="text"
+                        value={productForm.image}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            image: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-cyan"
+                        placeholder="🥤"
                       />
                     </div>
                     <div>
                       <label className="block text-white/80 text-sm font-semibold mb-2">
                         Energy Level
                       </label>
-                      <select className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-red">
+                      <select
+                        value={productForm.energy}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            energy: e.target.value as any,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-red"
+                      >
                         <option value="Medium">Medium</option>
                         <option value="High">High</option>
                         <option value="Ultra">Ultra</option>
                       </select>
                     </div>
-                  </>
-                )}
-                <div className="flex space-x-4 pt-4">
-                  <button
-                    onClick={closeModal}
-                    className="flex-1 px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button className="flex-1 catrink-button flex items-center justify-center space-x-2">
-                    <Save className="w-4 h-4" />
-                    <span>Save</span>
-                  </button>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Flavor
+                      </label>
+                      <input
+                        type="text"
+                        value={productForm.flavor}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            flavor: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-pink"
+                        placeholder="Flavor name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Category
+                      </label>
+                      <input
+                        type="text"
+                        value={productForm.category}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            category: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue"
+                        placeholder="tropical, citrus, etc"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Rating
+                      </label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                        value={productForm.rating}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            rating: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-yellow-400"
+                        placeholder="4.5"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-semibold mb-2">
+                      Reviews Count
+                    </label>
+                    <input
+                      type="number"
+                      value={productForm.reviews}
+                      onChange={(e) =>
+                        setProductForm((prev) => ({
+                          ...prev,
+                          reviews: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-purple"
+                      placeholder="1247"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-semibold mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={productForm.description}
+                      onChange={(e) =>
+                        setProductForm((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-cyan resize-none"
+                      placeholder="Product description..."
+                    />
+                  </div>
+
+                  <div className="flex space-x-4 pt-4">
+                    <button
+                      onClick={closeModal}
+                      className="flex-1 px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveProduct}
+                      className="flex-1 catrink-button flex items-center justify-center space-x-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Product</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Flavor Form */}
+              {modalType === "flavor" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={flavorForm.name}
+                        onChange={(e) =>
+                          setFlavorForm((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue"
+                        placeholder="Flavor name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Price *
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={flavorForm.price}
+                        onChange={(e) =>
+                          setFlavorForm((prev) => ({
+                            ...prev,
+                            price: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-purple"
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-semibold mb-2">
+                      Tagline
+                    </label>
+                    <input
+                      type="text"
+                      value={flavorForm.tagline}
+                      onChange={(e) =>
+                        setFlavorForm((prev) => ({
+                          ...prev,
+                          tagline: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-cyan"
+                      placeholder="Tropical Thunder Unleashed"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Image (Emoji)
+                      </label>
+                      <input
+                        type="text"
+                        value={flavorForm.image}
+                        onChange={(e) =>
+                          setFlavorForm((prev) => ({
+                            ...prev,
+                            image: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-pink"
+                        placeholder="🥭"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Energy Level
+                      </label>
+                      <select
+                        value={flavorForm.energyLevel}
+                        onChange={(e) =>
+                          setFlavorForm((prev) => ({
+                            ...prev,
+                            energyLevel: e.target.value as any,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-red"
+                      >
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Ultra">Ultra</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Rating
+                      </label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                        value={flavorForm.rating}
+                        onChange={(e) =>
+                          setFlavorForm((prev) => ({
+                            ...prev,
+                            rating: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-yellow-400"
+                        placeholder="4.5"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Color Gradient
+                      </label>
+                      <input
+                        type="text"
+                        value={flavorForm.color}
+                        onChange={(e) =>
+                          setFlavorForm((prev) => ({
+                            ...prev,
+                            color: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue"
+                        placeholder="from-orange-400 via-yellow-500 to-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Reviews Count
+                      </label>
+                      <input
+                        type="number"
+                        value={flavorForm.reviews}
+                        onChange={(e) =>
+                          setFlavorForm((prev) => ({
+                            ...prev,
+                            reviews: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-purple"
+                        placeholder="1247"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-semibold mb-2">
+                      Ingredients (comma separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={flavorForm.ingredients}
+                      onChange={(e) =>
+                        setFlavorForm((prev) => ({
+                          ...prev,
+                          ingredients: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-cyan"
+                      placeholder="Natural Mango Extract, Taurine, B-Vitamins, Natural Caffeine"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-semibold mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={flavorForm.description}
+                      onChange={(e) =>
+                        setFlavorForm((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-pink resize-none"
+                      placeholder="Flavor description..."
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={flavorForm.featured}
+                      onChange={(e) =>
+                        setFlavorForm((prev) => ({
+                          ...prev,
+                          featured: e.target.checked,
+                        }))
+                      }
+                      className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue"
+                    />
+                    <label className="text-white font-orbitron">
+                      Featured Flavor
+                    </label>
+                  </div>
+
+                  <div className="flex space-x-4 pt-4">
+                    <button
+                      onClick={closeModal}
+                      className="flex-1 px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveFlavor}
+                      className="flex-1 catrink-button flex items-center justify-center space-x-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Flavor</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Coupon Form - Simplified */}
+              {modalType === "coupon" && (
+                <div className="space-y-4">
+                  <p className="text-white/60 text-center">
+                    Coupon management coming soon...
+                  </p>
+                  <div className="flex space-x-4 pt-4">
+                    <button
+                      onClick={closeModal}
+                      className="w-full px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
