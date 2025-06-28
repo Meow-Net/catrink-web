@@ -60,14 +60,22 @@ const Checkout = () => {
   const sendOrderNotificationEmail = async (orderData: any) => {
     try {
       // Format items list for email
-      const itemsList = orderData.items.map((item: any) =>
-        `• ${item.quantity}x ${item.name} ${item.image} - $${(item.price * item.quantity).toFixed(2)}`
-      ).join('\n');
+      const itemsList = orderData.items
+        .map(
+          (item: any) =>
+            `• ${item.quantity}x ${item.name} ${item.image} - $${(item.price * item.quantity).toFixed(2)}`,
+        )
+        .join("\n");
 
       // Calculate totals
-      const subtotal = orderData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+      const subtotal = orderData.items.reduce(
+        (sum: number, item: any) => sum + item.price * item.quantity,
+        0,
+      );
       const shippingCost = shippingMethod === "pickup" ? 0 : shipping;
-      const discountAmount = orderData.couponApplied ? orderData.couponApplied.discount : 0;
+      const discountAmount = orderData.couponApplied
+        ? orderData.couponApplied.discount
+        : 0;
 
       const emailMessage = `
 🐱 NEW CATRINK ORDER RECEIVED! 🐱
@@ -99,7 +107,7 @@ PRICING BREAKDOWN:
 ═══════════════════════════
 💰 Subtotal: $${subtotal.toFixed(2)}
 🚚 Shipping: $${shippingCost.toFixed(2)}
-${orderData.couponApplied ? `🎟️ Coupon (${orderData.couponApplied.code}): -$${discountAmount.toFixed(2)}` : ''}
+${orderData.couponApplied ? `🎟️ Coupon (${orderData.couponApplied.code}): -$${discountAmount.toFixed(2)}` : ""}
 ─────────────────────────────
 💵 TOTAL: $${orderData.totalAmount.toFixed(2)}
 
@@ -114,22 +122,17 @@ Meow! 🐱
         from_name: "Catrink Order System",
         subject: `🐱 New Order #${orderData.trackingId} - $${orderData.totalAmount.toFixed(2)}`,
         message: emailMessage,
-        reply_to: billingInfo.email || "noreply@catrink.com"
+        reply_to: billingInfo.email || "noreply@catrink.com",
       };
 
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         "template_c2wun1e", // Using the same template as contact form
         emailParams,
-        EMAILJS_PUBLIC_KEY
+        EMAILJS_PUBLIC_KEY,
       );
 
       console.log("Order notification email sent successfully");
-    } catch (error) {
-      console.error("Failed to send order notification email:", error);
-      // Don't fail the order if email fails
-    }
-  };
     } catch (error) {
       console.error("Failed to send order notification email:", error);
       // Don't fail the order if email fails
