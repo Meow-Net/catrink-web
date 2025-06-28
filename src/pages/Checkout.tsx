@@ -52,6 +52,51 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { addOrder, generateTrackingId } = useOrders();
 
+  // EmailJS configuration
+  const EMAILJS_SERVICE_ID = "service_c2wun1e";
+  const EMAILJS_PUBLIC_KEY = "wI1Qo5uf_5A-iCy0u";
+
+  // Send order notification email to admin
+  const sendOrderNotificationEmail = async (orderData: any) => {
+    try {
+      const emailParams = {
+        to_email: "flayermc.in@gmail.com",
+        subject: `New Catrink Order - ${orderData.trackingId}`,
+        order_id: orderData.trackingId,
+        customer_name: orderData.shippingAddress.fullName,
+        customer_email: billingInfo.email || "Not provided",
+        customer_phone: billingInfo.phone || "Not provided",
+        order_date: orderData.orderDate.toLocaleDateString(),
+        payment_method: orderData.paymentMethod,
+        shipping_method: shippingMethod,
+        total_amount: `$${orderData.totalAmount.toFixed(2)}`,
+        items_list: orderData.items
+          .map(
+            (item: any) =>
+              `${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}`,
+          )
+          .join("\n"),
+        shipping_address: `${orderData.shippingAddress.street}, ${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zipCode}, ${orderData.shippingAddress.country}`,
+        coupon_info: orderData.couponApplied
+          ? `Coupon: ${orderData.couponApplied.code} - $${orderData.couponApplied.discount} discount`
+          : "No coupon applied",
+        estimated_delivery: orderData.estimatedDelivery.toLocaleDateString(),
+      };
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        "template_c2wun1e", // Using the same template as contact form
+        emailParams,
+        EMAILJS_PUBLIC_KEY,
+      );
+
+      console.log("Order notification email sent successfully");
+    } catch (error) {
+      console.error("Failed to send order notification email:", error);
+      // Don't fail the order if email fails
+    }
+  };
+
   // Mock cart items - in real app, this would come from cart context
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {
