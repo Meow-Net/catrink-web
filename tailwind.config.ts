@@ -19,7 +19,6 @@ export default {
     },
     extend: {
       colors: {
-        // Original shadcn colors maintained for compatibility
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -63,7 +62,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Catrink neon brand colors
         neon: {
           blue: "hsl(var(--neon-blue))",
           purple: "hsl(var(--neon-purple))",
@@ -156,7 +154,7 @@ export default {
   },
   plugins: [
     require("tailwindcss-animate"),
-    function ({ addUtilities }: any) {
+    function ({ addUtilities }) {
       const newUtilities = {
         ".glass": {
           background: "rgba(255, 255, 255, 0.1)",
