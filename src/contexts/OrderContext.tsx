@@ -72,16 +72,55 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
     return userEmail ? `catrink_has_ever_ordered_${userEmail}` : null;
   };
 
-  // Load hasEverOrdered flag when user changes
+  // Get orders storage key
+  const getOrdersStorageKey = () => {
+    const userEmail = currentUser?.email || (isAdmin ? "admin@catrink.in" : "");
+    return userEmail ? `catrink_orders_${userEmail}` : null;
+  };
+
+  // Load orders and hasEverOrdered flag when user changes
   useEffect(() => {
     const storageKey = getUserStorageKey();
+    const ordersKey = getOrdersStorageKey();
+
     if (storageKey) {
       const savedFlag = localStorage.getItem(storageKey);
       setHasEverOrdered(savedFlag === "true");
     } else {
       setHasEverOrdered(false);
     }
+
+    if (ordersKey) {
+      const savedOrders = localStorage.getItem(ordersKey);
+      if (savedOrders) {
+        try {
+          const parsedOrders = JSON.parse(savedOrders);
+          // Convert date strings back to Date objects
+          const ordersWithDates = parsedOrders.map((order: any) => ({
+            ...order,
+            orderDate: new Date(order.orderDate),
+            estimatedDelivery: new Date(order.estimatedDelivery),
+          }));
+          setOrders(ordersWithDates);
+        } catch (error) {
+          console.error("Error loading orders:", error);
+          setOrders([]);
+        }
+      } else {
+        setOrders([]);
+      }
+    } else {
+      setOrders([]);
+    }
   }, [currentUser, isAdmin]);
+
+  // Save orders to localStorage whenever orders change
+  useEffect(() => {
+    const ordersKey = getOrdersStorageKey();
+    if (ordersKey && orders.length > 0) {
+      localStorage.setItem(ordersKey, JSON.stringify(orders));
+    }
+  }, [orders, currentUser, isAdmin]);
 
   const generateTrackingId = (): string => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*";
