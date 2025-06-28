@@ -44,6 +44,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Admin credentials
+  const ADMIN_EMAIL = "admin@catrink.in";
+  const ADMIN_PASSWORD = "HardikSri@123";
+
   // Load session from localStorage on app start
   useEffect(() => {
     const savedSession = localStorage.getItem("catrink_session");
@@ -71,9 +75,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(false);
   }, []);
 
-  // Admin credentials
-  const ADMIN_EMAIL = "admin@catrink.in";
-  const ADMIN_PASSWORD = "HardikSri@123";
+  // Firebase auth state listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const savedSession = localStorage.getItem("catrink_session");
+
+      if (user && !isAdmin) {
+        setCurrentUser(user);
+        // Save new Firebase user session
+        localStorage.setItem(
+          "catrink_session",
+          JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            isAdmin: false,
+          }),
+        );
+      } else if (!user && !isAdmin && !savedSession) {
+        setCurrentUser(null);
+        setIsAdmin(false);
+      }
+
+      if (!savedSession) {
+        setLoading(false);
+      }
+    });
+
+    return unsubscribe;
+  }, [isAdmin]);
 
   const signup = (email: string, password: string) => {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -137,43 +167,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return sendPasswordResetEmail(auth, email);
   };
 
-  const value = {
-    currentUser,
-    login,
-    signup,
-    logout,
-    resetPassword,
-    loading,
-    isAdmin,
-  };
-        // Save new Firebase user session
-        localStorage.setItem(
-          "catrink_session",
-          JSON.stringify({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            isAdmin: false,
-          }),
-        );
-      } else if (!user && !isAdmin && !savedSession) {
-        setCurrentUser(null);
-        setIsAdmin(false);
-      }
-
-      if (!savedSession) {
-        setLoading(false);
-      }
-    });
-
-    return unsubscribe;
-  }, [isAdmin]);
-
   const value: AuthContextType = {
     currentUser,
     login,
     signup,
     logout,
+    resetPassword,
     loading,
     isAdmin,
   };
