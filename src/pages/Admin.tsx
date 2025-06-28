@@ -352,9 +352,17 @@ const Admin = () => {
         deleteProduct(id);
       } else if (type === "flavors") {
         deleteFlavor(id);
+      } else if (type === "coupons") {
+        setCoupons((prev) => prev.filter((c) => c.id !== id));
       }
       alert("Item deleted successfully!");
     }
+  };
+
+  const toggleCouponStatus = (id: string) => {
+    setCoupons((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, active: !c.active } : c)),
+    );
   };
 
   if (!isAdmin) {
