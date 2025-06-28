@@ -178,15 +178,6 @@ const Layout = ({ children }: LayoutProps) => {
                         data-user-menu
                       >
                         <Link
-                          to="/profile"
-                          className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-                          onClick={() => setShowUserMenu(false)}
-                        >
-                          <Settings className="w-4 h-4" />
-                          <span>Profile</span>
-                        </Link>
-
-                        <Link
                           to="/orders"
                           className="flex items-center space-x-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
                           onClick={() => setShowUserMenu(false)}
