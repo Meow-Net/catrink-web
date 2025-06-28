@@ -1059,18 +1059,152 @@ const Admin = () => {
                 </div>
               )}
 
-              {/* Coupon Form - Simplified */}
+              {/* Coupon Form */}
               {modalType === "coupon" && (
                 <div className="space-y-4">
-                  <p className="text-white/60 text-center">
-                    Coupon management coming soon...
-                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Coupon Code *
+                      </label>
+                      <input
+                        type="text"
+                        value={couponForm.code}
+                        onChange={(e) =>
+                          setCouponForm((prev) => ({
+                            ...prev,
+                            code: e.target.value.toUpperCase(),
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue uppercase"
+                        placeholder="CATPOWER20"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Discount *
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={couponForm.discount}
+                        onChange={(e) =>
+                          setCouponForm((prev) => ({
+                            ...prev,
+                            discount: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-purple"
+                        placeholder="20"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Discount Type
+                      </label>
+                      <select
+                        value={couponForm.type}
+                        onChange={(e) =>
+                          setCouponForm((prev) => ({
+                            ...prev,
+                            type: e.target.value as any,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                      >
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed Amount ($)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Minimum Order ($)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={couponForm.minOrder}
+                        onChange={(e) =>
+                          setCouponForm((prev) => ({
+                            ...prev,
+                            minOrder: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-red"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Maximum Uses
+                      </label>
+                      <input
+                        type="number"
+                        value={couponForm.maxUses}
+                        onChange={(e) =>
+                          setCouponForm((prev) => ({
+                            ...prev,
+                            maxUses: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-pink"
+                        placeholder="100"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                        Expiry Date
+                      </label>
+                      <input
+                        type="date"
+                        value={couponForm.expiryDate}
+                        onChange={(e) =>
+                          setCouponForm((prev) => ({
+                            ...prev,
+                            expiryDate: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-blue"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={couponForm.active}
+                      onChange={(e) =>
+                        setCouponForm((prev) => ({
+                          ...prev,
+                          active: e.target.checked,
+                        }))
+                      }
+                      className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue"
+                    />
+                    <label className="text-white font-orbitron">
+                      Active Coupon
+                    </label>
+                  </div>
+
                   <div className="flex space-x-4 pt-4">
                     <button
                       onClick={closeModal}
-                      className="w-full px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-colors"
+                      className="flex-1 px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-colors"
                     >
-                      Close
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveCoupon}
+                      className="flex-1 catrink-button flex items-center justify-center space-x-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save Coupon</span>
                     </button>
                   </div>
                 </div>
