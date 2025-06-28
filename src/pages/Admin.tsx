@@ -305,6 +305,47 @@ const Admin = () => {
     alert(`Flavor ${editingItem ? "updated" : "added"} successfully! Meow! 🐱`);
   };
 
+  const handleSaveCoupon = () => {
+    if (!couponForm.code || !couponForm.discount) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    // Check if coupon code already exists (except when editing)
+    const existingCoupon = coupons.find(
+      (c) =>
+        c.code.toLowerCase() === couponForm.code.toLowerCase() &&
+        (!editingItem || c.id !== editingItem.id),
+    );
+    if (existingCoupon) {
+      alert("A coupon with this code already exists!");
+      return;
+    }
+
+    const couponData: Coupon = {
+      id: editingItem ? editingItem.id : Date.now().toString(),
+      code: couponForm.code.toUpperCase(),
+      discount: parseFloat(couponForm.discount),
+      type: couponForm.type,
+      minOrder: parseFloat(couponForm.minOrder) || 0,
+      maxUses: parseInt(couponForm.maxUses) || 100,
+      currentUses: editingItem ? editingItem.currentUses : 0,
+      expiryDate: couponForm.expiryDate,
+      active: couponForm.active,
+    };
+
+    if (editingItem) {
+      setCoupons((prev) =>
+        prev.map((c) => (c.id === editingItem.id ? couponData : c)),
+      );
+    } else {
+      setCoupons((prev) => [...prev, couponData]);
+    }
+
+    closeModal();
+    alert(`Coupon ${editingItem ? "updated" : "added"} successfully! Meow! 🐱`);
+  };
+
   const deleteItem = (type: string, id: string) => {
     if (confirm("Are you sure you want to delete this item?")) {
       if (type === "products") {
