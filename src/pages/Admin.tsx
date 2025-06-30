@@ -488,19 +488,19 @@ const Admin = () => {
             {!sidebarCollapsed && (
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
+                  <Shield className="w-4 h-4 text-black" />
                 </div>
                 <div>
-                  <h2 className="font-orbitron font-bold text-white">
+                  <h2 className="font-orbitron font-bold text-black">
                     Admin Panel
                   </h2>
-                  <p className="text-xs text-white/60">Catrink Management</p>
+                  <p className="text-xs text-black/60">Catrink Management</p>
                 </div>
               </div>
             )}
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors text-black"
             >
               {sidebarCollapsed ? (
                 <ChevronRight className="w-4 h-4" />
@@ -521,7 +521,7 @@ const Admin = () => {
                 "w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors",
                 activeSection === item.id
                   ? "bg-neon-blue/20 text-neon-blue"
-                  : "text-white/70 hover:text-white hover:bg-white/10",
+                  : "text-black/70 hover:text-black hover:bg-white/10",
               )}
             >
               <item.icon className="w-5 h-5" />
@@ -549,12 +549,12 @@ const Admin = () => {
         {/* Top Bar */}
         <div className="h-16 border-b border-white/10 bg-slate-900/30 backdrop-blur-md px-6 flex items-center justify-between">
           <div>
-            <h1 className="font-orbitron font-bold text-xl text-white capitalize">
+            <h1 className="font-orbitron font-bold text-xl text-black capitalize">
               {activeSection === "dashboard"
                 ? "Dashboard Overview"
                 : activeSection}
             </h1>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-black/60">
               {activeSection === "dashboard"
                 ? "Welcome back, Administrator"
                 : `Manage ${activeSection}`}
@@ -565,20 +565,20 @@ const Admin = () => {
           {(activeSection === "users" || activeSection === "orders") && (
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-black/40" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder={`Search ${activeSection}...`}
-                  className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue"
+                  className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-black placeholder-white/40 focus:outline-none focus:border-neon-blue"
                 />
               </div>
               {activeSection === "users" && (
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
+                  className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-black focus:outline-none focus:border-neon-purple"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
@@ -600,8 +600,8 @@ const Admin = () => {
                 <div className="glass-card p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white/60 text-sm">Total Users</p>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-black/60 text-sm">Total Users</p>
+                      <p className="text-2xl font-bold text-black">
                         {stats.totalUsers}
                       </p>
                     </div>
@@ -612,8 +612,8 @@ const Admin = () => {
                 <div className="glass-card p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white/60 text-sm">Total Orders</p>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-black/60 text-sm">Total Orders</p>
+                      <p className="text-2xl font-bold text-black">
                         {stats.totalOrders}
                       </p>
                     </div>
@@ -624,8 +624,8 @@ const Admin = () => {
                 <div className="glass-card p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white/60 text-sm">Revenue</p>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-black/60 text-sm">Revenue</p>
+                      <p className="text-2xl font-bold text-black">
                         ${stats.totalRevenue.toFixed(2)}
                       </p>
                     </div>
@@ -636,8 +636,8 @@ const Admin = () => {
                 <div className="glass-card p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white/60 text-sm">Products</p>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-black/60 text-sm">Products</p>
+                      <p className="text-2xl font-bold text-black">
                         {stats.totalProducts}
                       </p>
                     </div>
@@ -648,8 +648,8 @@ const Admin = () => {
                 <div className="glass-card p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white/60 text-sm">Active Coupons</p>
-                      <p className="text-2xl font-bold text-white">
+                      <p className="text-black/60 text-sm">Active Coupons</p>
+                      <p className="text-2xl font-bold text-black">
                         {stats.activeCoupons}
                       </p>
                     </div>
@@ -660,7 +660,7 @@ const Admin = () => {
 
               {/* Recent Orders */}
               <div className="glass-card p-6">
-                <h3 className="font-orbitron font-bold text-xl text-white mb-4">
+                <h3 className="font-orbitron font-bold text-xl text-black mb-4">
                   Recent Orders
                 </h3>
                 <div className="space-y-4">
@@ -670,10 +670,10 @@ const Admin = () => {
                       className="flex items-center justify-between p-4 bg-white/5 rounded-lg"
                     >
                       <div>
-                        <p className="font-semibold text-white">
+                        <p className="font-semibold text-black">
                           {order.trackingId}
                         </p>
-                        <p className="text-sm text-white/60">
+                        <p className="text-sm text-black/60">
                           {order.shippingAddress.fullName}
                         </p>
                       </div>
@@ -681,7 +681,7 @@ const Admin = () => {
                         <p className="font-semibold text-neon-green">
                           ${order.totalAmount.toFixed(2)}
                         </p>
-                        <p className="text-sm text-white/60">
+                        <p className="text-sm text-black/60">
                           {order.orderDate.toLocaleDateString()}
                         </p>
                       </div>
@@ -696,7 +696,7 @@ const Admin = () => {
           {activeSection === "users" && (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="font-orbitron font-bold text-2xl text-white">
+                <h2 className="font-orbitron font-bold text-2xl text-black">
                   Users Management
                 </h2>
                 <button
@@ -718,18 +718,18 @@ const Admin = () => {
                       <div className="flex items-center space-x-4">
                         <div className="text-2xl">{user.avatar}</div>
                         <div>
-                          <h3 className="font-semibold text-white">
+                          <h3 className="font-semibold text-black">
                             {user.name}
                           </h3>
-                          <p className="text-sm text-white/60">{user.email}</p>
-                          <p className="text-xs text-white/40">
+                          <p className="text-sm text-black/60">{user.email}</p>
+                          <p className="text-xs text-black/40">
                             Joined: {user.joinDate}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
-                          <p className="text-sm text-white/60">
+                          <p className="text-sm text-black/60">
                             {user.orders} orders
                           </p>
                           <p className="text-sm text-neon-green">
@@ -774,7 +774,7 @@ const Admin = () => {
           {/* Orders Management */}
           {activeSection === "orders" && (
             <div>
-              <h2 className="font-orbitron font-bold text-2xl text-white mb-6">
+              <h2 className="font-orbitron font-bold text-2xl text-black mb-6">
                 Orders Management
               </h2>
 
@@ -785,7 +785,7 @@ const Admin = () => {
                       <div className="flex items-start justify-between">
                         <div className="space-y-2">
                           <div className="flex items-center space-x-4">
-                            <h3 className="font-semibold text-white">
+                            <h3 className="font-semibold text-black">
                               {order.trackingId}
                             </h3>
                             <span
@@ -802,13 +802,13 @@ const Admin = () => {
                               {order.status}
                             </span>
                           </div>
-                          <p className="text-sm text-white/60">
+                          <p className="text-sm text-black/60">
                             Customer: {order.shippingAddress.fullName}
                           </p>
-                          <p className="text-sm text-white/60">
+                          <p className="text-sm text-black/60">
                             Date: {order.orderDate.toLocaleDateString()}
                           </p>
-                          <div className="text-sm text-white/60">
+                          <div className="text-sm text-black/60">
                             Items:{" "}
                             {order.items
                               .map((item) => `${item.quantity}x ${item.name}`)
@@ -819,7 +819,7 @@ const Admin = () => {
                           <p className="font-bold text-neon-green text-lg">
                             ${order.totalAmount.toFixed(2)}
                           </p>
-                          <p className="text-sm text-white/60">
+                          <p className="text-sm text-black/60">
                             {order.paymentMethod}
                           </p>
                         </div>
@@ -835,7 +835,7 @@ const Admin = () => {
           {activeSection === "products" && (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="font-orbitron font-bold text-2xl text-white">
+                <h2 className="font-orbitron font-bold text-2xl text-black">
                   Products Management
                 </h2>
                 <button
@@ -851,7 +851,7 @@ const Admin = () => {
                   <div key={product.id} className="glass-card p-6">
                     <div className="text-center mb-4">
                       <div className="text-4xl mb-2">{product.image}</div>
-                      <h3 className="font-orbitron font-bold text-white">
+                      <h3 className="font-orbitron font-bold text-black">
                         {product.name}
                       </h3>
                       <p className="text-neon-cyan">${product.price}</p>
@@ -896,12 +896,12 @@ const Admin = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
-                <h3 className="font-orbitron font-bold text-xl text-white">
+                <h3 className="font-orbitron font-bold text-xl text-black">
                   {editingItem ? "Edit" : "Add"} {modalType}
                 </h3>
                 <button
                   onClick={closeModal}
-                  className="text-white/60 hover:text-white"
+                  className="text-black/60 hover:text-black"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -912,7 +912,7 @@ const Admin = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                      <label className="block text-black/80 text-sm font-semibold mb-2">
                         Full Name *
                       </label>
                       <input
@@ -924,12 +924,12 @@ const Admin = () => {
                             name: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-blue"
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-black placeholder-white/40 focus:outline-none focus:border-neon-blue"
                         placeholder="John Doe"
                       />
                     </div>
                     <div>
-                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                      <label className="block text-black/80 text-sm font-semibold mb-2">
                         Email *
                       </label>
                       <input
@@ -941,7 +941,7 @@ const Admin = () => {
                             email: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-purple"
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-black placeholder-white/40 focus:outline-none focus:border-neon-purple"
                         placeholder="john@example.com"
                       />
                     </div>
@@ -949,7 +949,7 @@ const Admin = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                      <label className="block text-black/80 text-sm font-semibold mb-2">
                         Phone
                       </label>
                       <input
@@ -961,12 +961,12 @@ const Admin = () => {
                             phone: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-cyan"
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-black placeholder-white/40 focus:outline-none focus:border-neon-cyan"
                         placeholder="+1234567890"
                       />
                     </div>
                     <div>
-                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                      <label className="block text-black/80 text-sm font-semibold mb-2">
                         Status
                       </label>
                       <select
@@ -977,7 +977,7 @@ const Admin = () => {
                             status: e.target.value as any,
                           }))
                         }
-                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-red"
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-black focus:outline-none focus:border-neon-red"
                       >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
@@ -988,7 +988,7 @@ const Admin = () => {
 
                   {!editingItem && (
                     <div>
-                      <label className="block text-white/80 text-sm font-semibold mb-2">
+                      <label className="block text-black/80 text-sm font-semibold mb-2">
                         Password
                       </label>
                       <input
@@ -1000,7 +1000,7 @@ const Admin = () => {
                             password: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-neon-pink"
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-black placeholder-white/40 focus:outline-none focus:border-neon-pink"
                         placeholder="Enter password"
                       />
                     </div>
@@ -1009,7 +1009,7 @@ const Admin = () => {
                   <div className="flex space-x-4 pt-4">
                     <button
                       onClick={closeModal}
-                      className="flex-1 px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-colors"
+                      className="flex-1 px-4 py-2 border border-white/20 rounded-lg text-black hover:bg-white/10 transition-colors"
                     >
                       Cancel
                     </button>
