@@ -19,7 +19,7 @@ import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import TrackOrder from "./pages/TrackOrder";
 import Orders from "./pages/Orders";
-import NotFound from "./pages/NotFound";
+import NotFound from "./pages/404";
 
 const queryClient = new QueryClient();
 
